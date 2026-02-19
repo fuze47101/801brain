@@ -1,48 +1,104 @@
-import subprocess
 import os
+import subprocess
+from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
+from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filters
 
-# SET THESE
-BOT_TOKEN = "8394346026:AAHI2LvcMguX4qIcwXE047eujnWjWDxdiWw"
-AUTHORIZED_USER_ID = 7215420287  # replace with your Telegram user ID
+# ===== LOAD ENV =====
+BRAIN_ROOT = os.path.expanduser("~/801brain")
+load_dotenv(os.path.join(BRAIN_ROOT, ".env"))
 
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+
+# ===== MESSAGE HANDLER =====
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id != AUTHORIZED_USER_ID:
-        await update.message.reply_text("Unauthorized.")
+    text = update.message.text.strip()
+    parts = text.split(" ")
+
+    if len(parts) < 2:
+        await update.message.reply_text(
+            "Format:\n"
+            "<project> resume\n"
+            "<project> confirm\n"
+            "<project> <role> <request>"
+        )
         return
 
-    user_message = update.message.text
+    project = parts[0]
+    action = parts[1]
+
+    # ===== RESUME MODE =====
+    if action == "resume":
+        command = [
+            "python3",
+            os.path.join(BRAIN_ROOT, "agents", "agent.py"),
+            "cloud",
+            project,
+            "resume"
+        ]
+
+    # ===== CONFIRM TASKS =====
+    elif action == "confirm":
+        command = [
+            "python3",
+            os.path.join(BRAIN_ROOT, "agents", "agent.py"),
+            "cloud",
+            project,
+            "confirm"
+        ]
+
+    # ===== ROLE MODE =====
+    else:
+        if len(parts) < 3:
+            await update.message.reply_text(
+                "Format: <project> <role> <request>"
+            )
+            return
+
+        role = parts[1]
+        request = " ".join(parts[2:])
+
+        command = [
+            "python3",
+            os.path.join(BRAIN_ROOT, "agents", "agent.py"),
+            "cloud",
+            project,
+            role,
+            request
+        ]
 
     try:
-        # Call your hybrid agent
         result = subprocess.run(
-            ["python3", "agent.py", "cloud", user_message],
+            command,
             capture_output=True,
             text=True,
-            timeout=120
+            timeout=90
         )
 
-        response = result.stdout.strip()
+        output = result.stdout.strip()
 
-        if not response:
-            response = "No output returned."
+        if not output:
+            output = "No output returned."
 
     except Exception as e:
-        response = f"Error: {str(e)}"
+        output = f"Execution error: {str(e)}"
 
-    # Telegram max message size safety
-    if len(response) > 4000:
-        response = response[:4000]
+    # Telegram message size limit protection
+    if len(output) > 4000:
+        output = output[:3900] + "\n\n[Truncated]"
 
-    await update.message.reply_text(response)
+    await update.message.reply_text(output)
 
+# ===== MAIN =====
 def main():
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    if not TELEGRAM_TOKEN:
+        raise ValueError("TELEGRAM_TOKEN not found in .env file")
+
+    app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
     print("Telegram Agent Running...")
     app.run_polling()
 
 if __name__ == "__main__":
     main()
-
