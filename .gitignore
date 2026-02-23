@@ -31,3 +31,27 @@ __pycache__/
 
 # OS / editor
 .DS_Store
+.vercel
+.env*.local
+
+# --- Secrets / local env ---
+.env
+.env.*
+.env.local
+.env.vercel
+.env.localworker
+
+# --- Vercel ---
+.vercel/
+
+# --- Runtime logs / pid ---
+logs/
+*.log
+*.out
+*.pid
+
+# --- Python venv ---
+.venv/
+venv/
+__pycache__/
+*.pyc
