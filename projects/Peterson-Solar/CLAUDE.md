@@ -135,8 +135,18 @@ Separate components, not integrated cabinet. Preferred deck received April 8.
   - 5× 30 kW "US Standard" hybrid inverter @ $5,381 = $26,905
     - 30 kW rated, 60 kW max PV, **160–800 V battery input (HV bus)**, 544×880×278 mm, 80 kg, 5 yr warranty
 - **Total: $127,125 FOB (EXW)** · Lead time 25 days · T/T **100% in advance** · **Validity expires 2026-04-23 (7 days)**
-- **This is 400 kWh / 150 kW — ~2.5× Tier 3.** Was clearly a "commercial default" quote.
-- **Right-sized math:** 1 inv + 1 cabinet = 40 kWh / 30 kW @ $15,403 FOB. Per-unit: $250/kWh battery, $179/kW inverter.
+- **As quoted = 400 kWh / 150 kW — ~2.5× Tier 3.** Classic commercial-default oversize.
+- **Per-unit rates:** 40 kWh cabinet **$10,022** (~$250/kWh). 30 kW inverter **$5,381** (~$179/kW).
+- **Right-sized math (unit × qty at per-unit rates):**
+
+| Sizing tier | Battery cabinets | kWh | Inverters | kW inv | Battery FOB | Inverter FOB | **Total FOB** |
+|---|---|---|---|---|---|---|---|
+| **Tier 1** (30 kWh) | 1× 40 kWh | 40 | 1× 30 kW | 30 | $10,022 | $5,381 | **$15,403** |
+| **Tier 2** (80 kWh) | 2× 40 kWh | 80 | 1× 30 kW | 30 | $20,044 | $5,381 | **$25,425** |
+| **Tier 3** (160 kWh) | **4× 40 kWh** | **160** | 2× 30 kW | 60 | **$40,088** | $10,762 | **$50,850** |
+| As-quoted | 10× 40 kWh | 400 | 5× 30 kW | 150 | $100,220 | $26,905 | $127,125 |
+
+- **Tier 3 headline (Andrew's working number):** 4 cabinets alone ≈ **$40k battery FOB**, and you'd add 1–2 inverters to get to a full ESS. Against Sunwave right-sized ($19,164 FOB for the same 160 kWh) that's **~2× more expensive before tariffs** — LongKun only wins if the inverter side has capability Sunwave can't match.
 - **⚠️ Unclear:** (a) Is the 30 kW "US Standard" inverter actually **split-phase 120/240 V**, or just rated for US grid freq? Text says "US Standard" but doesn't name phase topology. (b) UL listings shown are for the **battery only** (UL1973/UL9540A) — **no UL cert called out on the inverter**. (c) HV bus (160–800 V) means this inverter is NOT compatible with Sunwave, GSL, SolArk, or any LV-bus battery stack. If buying LongKun, it's LongKun-inverter + LongKun-cabinet, period.
 - **Status:** ⚠️ Validity window tight; right-size + clarify before responding.
 
