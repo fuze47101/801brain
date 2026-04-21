@@ -1,6 +1,6 @@
 # Peterson Solar Project — Working Memory
 
-**Last updated:** April 20, 2026 (rev 4 — 5 new supplier quotes added; battery-only + tracker-only vendors flagged for pairing; ZRD pricing obtained from Torres Wang; Joy Chen = GSL Energy reconciled)
+**Last updated:** April 21, 2026 (rev 4.3 — Kamada confirmed 1 set = 80 kWh → Tier 2 DDP is the new cheapest option; ZRD revised to $850/set; panels-per-tracker design error fixed (was 2, actually 8–10); well-pump + genny gates dropped per Andrew; panels remain the biggest open gap)
 **Project owner:** Andrew (son), sourcing on behalf of Roger L. Peterson (father)
 **Site:** 1324 E Green Meadows Ct, Erda, Utah 84074 — 5-acre property
 **Problem:** ~$800/mo summer electric bills from continuous well pump; ~$3,500/yr total
@@ -17,7 +17,7 @@
 | Design doc | Rev 2 complete, OBBBA no-ITC baseline | `Peterson_Solar_Design.html` |
 | Comparison sheet | 4 tabs, rev'd April 21 | `Peterson_Solar_Quote_Comparison.xlsx` |
 | Panels | Simone Wang quoted $3,250 for 8-panel dual-axis bundle | Company name still pending |
-| Trackers | **ZRD priced via Torres Wang @ $800/set FOB Qingdao (30 sets = 1× 20GP)** + Huayue drawing only (no price); Simone bundle numbers stand | Torres Wang is ZRD's sales rep; foundation bolts + wind sensor included |
+| Trackers | **ZRD priced via Torres Wang @ $850/set FOB Qingdao (30 sets = 1× 20GP)** + Huayue drawing only (no price); Simone bundle numbers stand | Torres Wang is ZRD's sales rep; foundation bolts + wind sensor included |
 | Inverter+battery (ESS) | **6 live quotes:** Sunpal/Megarevo, Japower (3 opts), Sunwave, LongKun, Kamada | Sunwave still LEADING CANDIDATE. LongKun + Kamada quotes need right-sizing. |
 | Batteries only (no inverter) | **GSL Energy 157.6 kWh LiFePO4 @ $17,710 FOB** — **Joy Chen is at GSL** (WhatsApp rel.) = Alex Yan's formal sales | Pair with LV-bus inverter (Sunwave / SolArk / SRNE) |
 | Local install | SolArk + Joy Chen batts — kept as fallback if Sunwave fails off-grid gates | |
@@ -152,17 +152,26 @@ Separate components, not integrated cabinet. Preferred deck received April 8.
 
 ### 3H. Kamada / Shenzhen Kamada Electronic — James Tang (James@kmdpower.com, +86 13237437130) — PI KMD-260417025, dated 2026-04-17
 - **Addressed "To: ledgesports, ATTN: Andrew Peterson"** — James identified Andrew's Ledge Sports domain, not the personal project.
-- **Line items as quoted (6 sets — also oversized):**
-  - 6× Hybrid inverter all-in-one "15 kW×2" 240 V split-phase @ $3,885 = $23,310
-    - **"RatedPower: 15 KW×2" is ambiguous** — could mean 30 kW continuous (two 15 kW stacks in one enclosure) OR 15 kW rated / 2× peak. 1 pallet / 0.25 CBM / 88 kg per unit. HS 8504.40.3090.
-  - 6× Kamada BESS, 16 kWh LiFePO4 pack (5 packs in parallel) @ $7,115 = $42,690
-    - **Sizing unclear** — "Lithium battery pack: 16000wh, 5 pieces are connected in parallel" reads like each BESS unit is 5× 16 kWh = 80 kWh, BUT the picture shows a single 5-high rack. Could be 16 kWh total per set. 10 yr warranty, 20 yr life. HS 8507.60.0090.
+- **✅ SIZING CONFIRMED (James, 2026-04-21):** **1 set = 80 kWh** (BESS is 5× 16 kWh packs in parallel). Original 6-set quote = 480 kWh / 180 kW inverter = ~3× Tier 3 (commercial default).
+- **Line items as quoted (6 sets):**
+  - 6× Hybrid inverter all-in-one "15 kW×2" 240 V split-phase @ $3,885 = $23,310 (HS 8504.40.3090)
+  - 6× Kamada BESS, **80 kWh** LiFePO4 pack (5× 16 kWh parallel) @ $7,115 = $42,690 (HS 8507.60.0090; 10 yr warranty, 20 yr life)
   - Sea shipping DDP to **Erda (ZIP 84074)**: $8,500 for 35 days
-- **Total $74,500 DDP, all-in** · T/T 50/50 · **Validity expires 2026-04-22 (5 days)**
+- **Total $74,500 DDP, all-in** · T/T 50/50 · **Validity expires 2026-04-22 (tomorrow)**
 - **Only DDP quote on the table** — directly comparable to Sunwave's ~$25,870 *landed*.
-- **Per-set back-calc (quote ÷ 6):** ~$12,417 per set DDP (if the 6-set interpretation holds).
-- **⚠️ Unclear:** (a) What is "a set" — one inverter + one 16 kWh battery, or one inverter + five 16 kWh batteries (80 kWh)? (b) UL / UL9540 status not mentioned anywhere. (c) Is the inverter grid-forming off-grid capable?
-- **Status:** Promising DDP economics if sizing decodes favorably; urgent to reply before validity lapses.
+- **Per-set back-calc:** $12,417 DDP per set (80 kWh + 30 kW inverter + freight share).
+- **Right-sized tier math:**
+
+| Sizing tier | Sets | kWh | kW inv | Inv FOB | BESS FOB | **Full DDP est.** |
+|---|---|---|---|---|---|---|
+| Tier 1 (30 kWh) | 1 set (80 kWh) | 80 | 30 | $3,885 | $7,115 | ~$12,400 DDP — **overshoots Tier 1 target by 50 kWh** |
+| **Tier 2 (80 kWh)** | **1 set** | **80** | **30** | **$3,885** | **$7,115** | **~$12,400 DDP** ⭐ exact fit |
+| **Tier 3 (160 kWh)** | **2 sets** | **160** | **60** | **$7,770** | **$14,230** | **~$25,000–27,000 DDP** (need James to requote — freight may not scale linearly) |
+| As-quoted | 6 sets | 480 | 180 | $23,310 | $42,690 | $74,500 DDP |
+
+- **Per-kWh economics:** BESS only = $89/kWh ($7,115 ÷ 80). Competitive with Sunwave ($81/kWh) and substantially better than LongKun ($250/kWh HV) and GSL ($110/kWh LV).
+- **⚠️ Still unclear:** (a) Is the "15 kW×2" one 30 kW continuous unit or two 15 kW stacks in one box? (b) UL9540 / UL1741 status — not shown on PI. (c) Grid-forming off-grid capable?
+- **Status:** **Now a serious contender at Tier 2 + Tier 3.** Tier 2 DDP @ ~$12,400 is the cheapest landed number on the board. Tier 3 @ 2 sets DDP is roughly tied with Sunwave-landed. Need UL/off-grid answers before committing.
 
 ### 3I. GSL Energy — Alex Yan (sales21@gsl-energy.com, +86 19926534667) — dated 2026-04-17
 - **Shenzhen GSL Energy Co., Ltd. Pure battery shop; "Since 2006, served 80+ countries."** (Received same PDF twice — deduped.)
@@ -192,8 +201,8 @@ Separate components, not integrated cabinet. Preferred deck received April 8.
 ### 3J. Sunchaser / Shandong Zhaori New Energy Tech — ZRD Dual-Axis Tracker
 **Contacts:** Torres Wang (Alibaba chat, sales rep) · solartracker@zhaoripv.com (general)
 
-- **PRICING (from Torres Wang via Alibaba chat, 2026-04-20):** **$800/set FOB Qingdao**, MOQ 30 sets = 1× 20GP container
-  - Exact price varies by panel size and panels/set — $800 is the working number pending final panel spec
+- **PRICING (from Torres Wang via Alibaba chat, 2026-04-20):** **$850/set FOB Qingdao**, MOQ 30 sets = 1× 20GP container
+  - Exact price varies by panel size and panels/set — $850 is the working number (rev 4.3, confirmed by Torres 2026-04-21); exact price still varies by panel size and panels/set
   - **Included in price:** foundation bolts + wind sensor
   - **Optional adder:** Rain + Snow Sensor **+$50/set** (worth specifying for Utah winter — Erda gets meaningful snowfall)
 - **Model family:** ZRD dual-axis tracker, Independent Drive, linear actuator + slewing drive + gear ring
@@ -204,6 +213,15 @@ Separate components, not integrated cabinet. Preferred deck received April 8.
 - **Warranty:** 3 years, extendable
 - **Company pitch:** 12 years experience, 60+ countries exported
 - **Container math:** 30 sets/20GP → if 8 panels/set then 240 panels/container; if 10 panels/set then 300 panels/container. Roger's Tier 3 at 550 W panels is ~54 panels — only ~20% of a minimum order. **MOQ mismatch** — need to either (a) aggregate a second buyer to hit 30 sets, (b) negotiate a smaller order at a premium, or (c) step up to a bigger system.
+- **✏️ ORIGINAL DESIGN ASSUMED 2 PANELS PER TRACKER — WRONG.** ZRD (and all modern dual-axis units ≥5 m²) actually hold 8–10 panels per set. System-wide impact: **far fewer tracker sets needed than the rev-2 design assumed.**
+
+| Tier | kW target | Panels @ 550 W | Old (2/set) | **New (8/set)** | **New (10/set)** | Tracker FOB @ $850/set (8/set) |
+|---|---|---|---|---|---|---|
+| Tier 1 | 9.9 kW | ~18 | 9 sets | **3 sets** | 2 sets | $2,550 FOB |
+| Tier 2 | 17.6 kW | ~32 | 16 sets | **4 sets** | 4 sets | $3,400 FOB |
+| Tier 3 | 29.7 kW | ~54 | 27 sets | **7 sets** | 6 sets | $5,950 FOB |
+
+- **Net effect:** Tier 3 tracker budget drops from ~$10–15k (rev-2 assumption) to ~$5,950 FOB / ~$7,440 landed. But the MOQ gap is now ~4× (7 of 30 sets), not ~1× — so the "aggregate a second buyer / LCL / negotiate small-order premium" problem is even more real.
 - **Outstanding questions to Torres (open):**
    - (a) **"How many panels fit on one set?"** — determines set quantity for Roger's pump-offset sizing
    - (b) **"Do you also provide cells?"** — asking whether ZRD sells panels too, which would collapse this into a single-supplier panels+trackers deal
@@ -228,7 +246,9 @@ Separate components, not integrated cabinet. Preferred deck received April 8.
 | Sunwave as-quoted (4× + 12×) | $27,864 | ~$37,600 | 192 | 72 |
 | LongKun right-sized (1 cab + 1 inv) | $15,403 | ~$20,790 | 40 | 30 |
 | LongKun Tier 3 equiv (4 cab + 2 inv) | ~$50,850 | ~$68,650 | 160 | 60 |
-| Kamada 6-set DDP as-quoted | $74,500 | $74,500 *(DDP, inclusive)* | ~96–480 (sizing TBC) | ~90 |
+| **Kamada Tier 2 (1 set, 80 kWh)** | — | **~$12,400 DDP** | 80 | 30 |
+| **Kamada Tier 3 (2 sets, 160 kWh)** | — | **~$25–27k DDP** | 160 | 60 |
+| Kamada 6-set DDP as-quoted | — | $74,500 DDP | 480 | 180 |
 | Japower Opt 3 × 2 | $39,998 | ~$54,000 | 200 | 60 |
 | Sunpal/Megarevo | $17,378 | ~$23,460 | ~80 | 30 |
 | SolArk-local + GSL batts (est) | ~$22,000 | ~$25,000 | ~140 | 15–20 |
@@ -241,7 +261,7 @@ Separate components, not integrated cabinet. Preferred deck received April 8.
 ### Trackers (FOB China; ~25% tariff)
 | Option | Per set FOB | Est. per set landed | Panels/set | Notes |
 |---|---|---|---|---|
-| ZRD / Sunchaser (Torres) | $800 | ~$1,000 | 2 / 6 / 8 / 10 (TBC) | MOQ 30 sets/20GP; foundation bolts + wind sensor incl.; +$50 snow sensor |
+| ZRD / Sunchaser (Torres) | **$850** | ~$1,063 | 2 / 6 / 8 / 10 (TBC) | MOQ 30 sets/20GP; foundation bolts + wind sensor incl.; +$50 snow sensor |
 | Huayue HYS-8PV | TBD | TBD | 8 | Drawing only |
 | Simone Wang bundle (panels+tracker) | $3,250/8-panel set | ~$4,060/set | 8 | Only bundle price on table; company name TBC |
 
@@ -400,7 +420,7 @@ Separate components, not integrated cabinet. Preferred deck received April 8.
  │  Secondary decision — sourcing less risky than ESS
  │
  ├─ ZRD (Torres Wang) trackers standalone
- │   → $800/set FOB Qingdao, MOQ 30 sets/20GP, +$50 snow sensor optional
+ │   → $850/set FOB Qingdao, MOQ 30 sets/20GP, +$50 snow sensor optional
  │   → CE + TÜV SÜD, foundation bolts + wind sensor included
  │   → ISSUE: MOQ way larger than Roger's needs — aggregate buyer OR negotiate
  │   → OPEN: panels/set, does ZRD also sell panels/cells
