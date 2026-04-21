@@ -23,9 +23,9 @@
 | Local install | SolArk + Joy Chen batts — kept as fallback if Sunwave fails off-grid gates | |
 | ITC status | **Residential 25D repealed by OBBBA 12/31/2025** — economics now assume $0 credit | 48E ag/LLC still open if construction begins by 7/4/2026 |
 | RMP interconnection | **NOT PURSUED** — off-grid architecture eliminates the need | Net billing credit too weak to justify cert + paperwork burden |
-| Diesel genny integration | AC input to hybrid inverter; auto-start if supported | Roger's existing unit — specs pending |
+| Diesel genny integration | AC input to hybrid inverter (Roger's existing unit) | Not a gating item; any hybrid we're looking at has a grid/gen input |
 | Customs broker | Not engaged | Needed before any order |
-| Well pump specs | **Not captured** — blocking finalization of inverter sizing | HP, V, phase |
+| Load profile | **Known** — pump load characterized; sizing driven by Andrew's tier preference, not pump nameplate | n/a |
 
 ---
 
@@ -239,27 +239,37 @@ Separate components, not integrated cabinet. Preferred deck received April 8.
 
 ## 5. Open questions / blocking items
 
-1. **Well pump nameplate** — HP, voltage, phase, FLA, LRA. Blocks final inverter sizing. **⭐ HIGHEST PRIORITY — ask Roger.**
-2. **Diesel genny specs** — make/model/kW rating; does it have 2-wire auto-start terminals? Determines whether Mode A is fully automated or manual-start. Ask Roger.
-3. **CPA call on 48E ag/LLC eligibility** — time-sensitive (7/4/2026 deadline to start construction). **⭐ HIGH PRIORITY.**
-4. **Sunwave off-grid verification (3 questions for Fred):**
-   - (a) Does SEI-18K-USP support pure off-grid / grid-forming mode (no grid reference required)?
-   - (b) Does the AC input accept a generator with 2-wire auto-start signal?
-   - (c) Parallel operation of 2 units — master/slave config, matched-battery-bank requirement?
-5. **ZRD / Torres Wang (open in Alibaba chat):**
-   - (a) How many panels fit on one set (2/6/8/10)? Determines set quantity for Roger.
-   - (b) Does ZRD also supply cells / panels, or tracker-only? Would collapse panels + trackers into one supplier.
-   - (c) MOQ 30 sets = 1× 20GP — can they do a smaller order (e.g., 7–10 sets) at a premium, or do we need to aggregate a second buyer?
-6. **LongKun (Zoey) urgent:** Validity expires 2026-04-23. Clarify (a) is the 30 kW "US Standard" inverter actually split-phase 120/240 V? (b) Any UL listing on the inverter? (c) right-size quote for 1× cabinet + 1× inverter.
-7. **Kamada (James) urgent:** Validity expires 2026-04-22. Clarify (a) what is "a set" — 16 kWh or 80 kWh battery? (b) is the 15 kW×2 inverter grid-forming off-grid capable? (c) any UL9540 / UL1741 listing?
-8. **GSL (Alex/Joy):** Confirm Joy Chen + Alex Yan are same company (Alibaba sidebar confirms — validate directly). Get UL1973/UL9540A cert docs. Confirm LV-bus protocol compatibility with Sunwave SEI-18K-USP.
-9. **Japower 80kWh/30kW integrated unit** — does this exact config exist? If yes, at what price? Laura only priced 80/18 and 100/30. (Lower priority now that Sunwave leads.)
-10. **SRNE 18kW model number and UL listing** — get from Laura; verify on UL database. (Lower priority.)
-11. **Simone Wang company name + full panel/tracker specs.**
-12. **Huayue (HYS-8PV) model number mismatch** — filename `-144-LSD` vs title block `-78-LSD`. Ask which they actually sell, plus datasheet + certs + price.
-13. **Customs broker engagement** — quote for managing a 20 ft or 40 ft container, HTS classification, duty calculation. HTS 8504.40.3090 (inverters) / 8507.60.0090 (batteries) / panel + tracker codes TBC.
-14. **Tooele County building department courtesy call** — confirm CSA-listed inverter satisfies NEC 690.4(B) listing requirement for off-grid install. 10-minute call, not a blocker but worth confirming.
-15. **Roger's property structure** — is there a farm/ranch LLC already, or would one need to be formed? (For 48E eligibility.)
+*(Load profile is known; well pump and diesel genny specs are NOT gating items — Mode A runs on any of the hybrids under consideration and the genny is just an AC input. 48E ag/LLC is worth chasing for the credit but is NOT a go/no-go gate.)*
+
+**Decision driver = best price + install + supplier quality, right-sized to Andrew's chosen tier.** Everything below is in service of that.
+
+1. **Sunwave (Fred Qin) — 3 clarifiers before we commit:**
+   - (a) SEI-18K-USP grid-forming / pure-off-grid support confirmed?
+   - (b) AC input takes a generator (simple source, no auto-start dependency)?
+   - (c) 2-unit parallel config — master/slave, matched battery banks required?
+2. **LongKun (Zoey Mai @ iRich Solar) — URGENT, expires 2026-04-23:**
+   - (a) Is the 30 kW "US Standard" inverter actually split-phase 120/240 V?
+   - (b) Any UL listing on the inverter itself (battery already has UL1973/9540A)?
+   - (c) Right-sized PI for 1× cabinet + 1× inverter (or 2+1 / 3+1 for tier scaling).
+3. **Kamada (James Tang @ Shenzhen Kamada / KMD Power) — URGENT, expires 2026-04-22:**
+   - (a) What is "a set" — 16 kWh or 80 kWh of battery?
+   - (b) Is the 15 kW×2 inverter one 30 kW unit or two 15 kW stacks, and is it grid-forming off-grid?
+   - (c) Any UL9540 / UL1741 listing?
+4. **ZRD / Torres Wang (open in Alibaba chat):**
+   - (a) How many panels fit on one set (2/6/8/10)?
+   - (b) Does ZRD also supply cells / panels?
+   - (c) Can they ship <30 sets at a premium, or do we aggregate a second buyer?
+5. **GSL (Joy Chen + Alex Yan, Shenzhen GSL Energy):**
+   - (a) Right-sized PI at Tier 1 / Tier 2 / Tier 3 (2 / 6 / 10–11 units).
+   - (b) UL1973 + UL9540A + UN38.3 + IEC62619 cert PDFs.
+   - (c) Outdoor-cabinet option (quote was indoor rack only).
+   - (d) BMS protocol list — confirm Sunwave SEI-18K-USP compatibility.
+6. **Japower (Laura):** Does an 80 kWh / 30 kW integrated unit actually exist, and at what price? Exact SRNE model + UL listing number.
+7. **Simone Wang:** Company name, panel brand/wattage, tracker spec, cert docs.
+8. **Huayue:** Confirm model (`-78-LSD` vs `-144-LSD`), datasheet, price, certs.
+9. **CPA call on 48E ag/LLC eligibility** — upside (~$17K on Tier 3) if it lands; not gating the supplier selection.
+10. **Customs broker engagement** — landed-cost estimate for a 20 ft / 40 ft mixed container (inverters 8504.40.3090 / batteries 8507.60.0090 / trackers + panel HTS TBC).
+11. **Tooele County building dept** — confirm CSA C22.2 107.1 satisfies NEC 690.4(B) (10-min call).
 
 ---
 
@@ -292,19 +302,13 @@ Separate components, not integrated cabinet. Preferred deck received April 8.
  └─ NO  → Section 25D residential path ($0 federal credit)
           └─ Economics already reflect this in design doc
 
- GATE 2 ── WELL PUMP PROFILE ──────────────────────────────────────────────
+ GATE 2 ── SIZING TIER (driven by Andrew's preference + tax outcome) ────
  │
- │  Get pump nameplate: HP, V, phase, FLA, LRA
+ │  Load profile is known; sizing is a business decision, not a pump-plate lookup.
  │
- ├─ Single-phase 240V, ≤5 HP → 18kW inverter class OK
- │    → Japower Opt 1 / Sunwave (if UL) / Sunpal-Megarevo all viable
- │
- ├─ Single-phase 240V, 7.5–10 HP → 30kW inverter class required
- │    → Japower Opt 3 / 2× 18kW paralleled / Sunwave 2× paralleled
- │
- └─ 3-phase ag pump → Reopens Japower Opt 2 (Solis 480V 3-phase)
-      → Commercial service reconfiguration required
-      → Likely cost-prohibitive; ask if pump could be replaced with 1ph
+ ├─ Tier 1 (9.9 kW / 30 kWh) — bill relief only
+ ├─ Tier 2 (17.6 kW / 80 kWh) — summer slayer ⭐ default if 48E lands short
+ └─ Tier 3 (29.7 kW / 160 kWh) — prepper / full offset ⭐ default if 48E lands
 
  GATE 3 ── OPERATING MODE (supersedes UL 1741 SA question) ───────────────
  │
@@ -414,19 +418,18 @@ Separate components, not integrated cabinet. Preferred deck received April 8.
 
 ## 8. Next actions (in priority order)
 
-1. **Ask Roger:** well pump nameplate (photo is fine) + diesel genny make/model/kW + does genny have 2-wire auto-start
-2. **Schedule CPA call** re: 48E ag/LLC structure and 7/4/2026 deadline
-3. **Reply to Fred (Sunwave)** — draft ready in outputs. Asks about off-grid mode, genny AC input, paralleling, and requests a right-sized quote (2× SEI-18K + 10× SW-LCT-16)
-4. **Reply to Zoey (LongKun) — URGENT, quote expires 2026-04-23.** Decline 10-cab/5-inv size; ask for right-sized 1 cab + 1 inv PI, inverter phase topology, and UL listing docs.
-5. **Reply to James (Kamada) — URGENT, quote expires 2026-04-22.** Decline 6-set size; decode "set" definition (16 kWh vs 80 kWh/set) and ask for UL9540 status + off-grid mode confirmation.
-6. **Reply to Torres (ZRD)** — answer his open thread. Need panels/set, whether ZRD sells cells/panels, and whether they'll ship <30 sets at a premium.
-7. **Reply to Joy / Alex (GSL)** — tell them Joy's 11-unit quote was oversized; ask for right-sized PI per sizing tier (Tier 1: 2× GSL-51-280, Tier 2: 6× units, Tier 3: 11× units). Confirm Joy + Alex work the same account.
-8. **Call Tooele County building dept** — confirm CSA C22.2 107.1 listing satisfies NEC 690.4(B) for permit purposes (10-min call)
-9. **Reply to Laura (Japower)** — keep Japower warm as backup; ask about 80kWh/30kW integrated config and SRNE 18kW exact UL listing
-10. **Push Simone Wang** for company name, panel wattage/brand, tracker model, cert docs
-11. **Push Huayue** on `-78-LSD` vs `-144-LSD` model, full datasheet, price
-12. **Engage a customs broker** for a landed-cost estimate on a 40 ft container (mixed: batteries + inverter + trackers + panels)
-13. **Update Peterson_Solar_Quote_Comparison.xlsx** with right-sized Sunwave scenario, Japower 3 options, and Mode A off-grid flag — DONE rev 4, keep syncing as quotes evolve
+1. **Reply to James (Kamada @ Shenzhen Kamada / `kmdpower.com`) — URGENT, expires 2026-04-22.** Decline 6-set size; decode what "a set" is (16 kWh vs 80 kWh), ask whether the 15 kW×2 is one 30 kW unit, UL9540 / UL1741 status, off-grid grid-forming.
+2. **Reply to Zoey (LongKun @ iRich Solar) — URGENT, expires 2026-04-23.** Decline 10-cab/5-inv size; ask for right-sized 1 cab + 1 inv PI, inverter phase topology (split-phase 120/240?), and UL listing on the inverter.
+3. **Reply to Fred (Sunwave)** — draft ready in outputs. Three-question email on off-grid / grid-forming, generator AC input, 2-unit paralleling. Requests a right-sized PI (2× SEI-18K + 10× SW-LCT-16).
+4. **Reply to Torres (ZRD @ Shandong Zhaori)** — answer his open thread. Need panels/set, whether ZRD sells cells/panels, and whether they'll ship <30 sets at a premium.
+5. **Reply to Joy / Alex (GSL)** — Joy's 11-unit quote was oversized; ask for Tier 1 / 2 / 3 PIs (2 / 6 / 10–11 units), UL1973 + UL9540A cert PDFs, outdoor-cabinet option, BMS protocol list.
+6. **Schedule CPA call** re: 48E ag/LLC structure and 7/4/2026 deadline — upside, not gating.
+7. **Reply to Laura (Japower)** — keep warm as backup; ask about 80 kWh / 30 kW integrated config and SRNE 18 kW exact UL listing number.
+8. **Push Simone Wang** for company name, panel wattage/brand, tracker model, cert docs.
+9. **Push Huayue** on `-78-LSD` vs `-144-LSD` model, full datasheet, price.
+10. **Call Tooele County building dept** — confirm CSA C22.2 107.1 satisfies NEC 690.4(B) (10-min call).
+11. **Engage a customs broker** for a landed-cost estimate on a mixed 40 ft container.
+12. **Keep `Peterson_Solar_Quote_Comparison.xlsx` in sync** with any new supplier clarifications.
 
 ---
 *This file is working memory for the Peterson solar project. Keep it updated as quotes arrive, decisions are made, and blockers clear.*
