@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Solaris FZ-500 — Pi 5 Assembly & Wiring Guide</title>
+<style>
+  body {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: #f4f6f8;
+    color: #1d2939;
+    margin: 0;
+    padding: 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  h1 { color: #0b3d5c; border-bottom: 3px solid #00b4c3; padding-bottom: 8px; }
+  h2 { color: #0b3d5c; margin-top: 36px; border-bottom: 1px solid #d0d5dd; padding-bottom: 6px; }
+  h3 { color: #344054; margin-top: 24px; }
+  .badge { display: inline-block; background: #00b4c3; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; letter-spacing: 0.08em; }
+  .subtitle { color: #667085; margin-bottom: 24px; }
+  .warn { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 6px; margin: 16px 0; font-size: 13px; }
+  .info { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 6px; margin: 16px 0; font-size: 13px; }
+  .danger { background: #fef2f2; border-left: 4px solid #ef4444; padding: 12px 16px; border-radius: 6px; margin: 16px 0; font-size: 13px; }
+  .step { background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px 24px; margin: 16px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .step-num { display: inline-block; background: #0b3d5c; color: white; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-weight: bold; font-size: 14px; margin-right: 10px; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin: 12px 0; }
+  th { background: #0b3d5c; color: white; padding: 10px 12px; text-align: left; font-size: 12px; }
+  td { padding: 8px 12px; border-top: 1px solid #eaecf0; font-size: 13px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: "SF Mono", "Fira Code", monospace; }
+  pre { background: #1e293b; color: #e2e8f0; padding: 16px 20px; border-radius: 8px; overflow-x: auto; font-size: 12px; line-height: 1.6; }
+  pre code { background: none; color: inherit; padding: 0; }
+  .pin { display: inline-block; background: #166534; color: white; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-family: monospace; font-weight: bold; }
+  .pin-gnd { background: #1f2937; }
+  .pin-pwr { background: #b91c1c; }
+  .pin-spi { background: #7c3aed; }
+  .pin-i2c { background: #0369a1; }
+  .pin-gpio { background: #166534; }
+  .wiring-diagram { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin: 16px 0; overflow-x: auto; }
+</style>
+</head>
+<body>
+
+<p><span class="badge">FZ-500</span> <span style="color:#667085;font-size:12px;margin-left:8px;">FUZE BIOTECH · ASSEMBLY GUIDE</span></p>
+<h1>Solaris FZ-500 — Pi 5 Assembly & Wiring</h1>
+<p class="subtitle">Step-by-step guide: from parts on the desk to running sensors. Standalone Pi 5, separate from Helios.</p>
+
+<div class="danger">
+<strong>SAFETY FIRST:</strong> The vaporizer block runs at 200°C, the cartridge heater pulls 300W at 120V mains. Always wire the thermal fuse (240°C) in series with the cartridge heater. Use a GFCI outlet. Never run the heater without water in the drip well — the thermal fuse is your last line of defense.
+</div>
+
+<!-- ============================================ -->
+<h2>Phase 1 — Pi 5 Setup</h2>
+<!-- ============================================ -->
+
+<div class="step">
+<p><span class="step-num">1</span><strong>CanaKit heatsink + fan</strong></p>
+<p>Apply a thin line of MX-6 thermal paste to the Pi 5's CPU (the big silver chip in the center). Press the CanaKit heatsink onto it — it has spring-loaded push pins that click into the board's mounting holes. Plug the fan header into the Pi 5's 4-pin fan connector (top edge of the board, between the USB-C power and the first USB-A).</p>
+</div>
+
+<div class="step">
+<p><span class="step-num">2</span><strong>MicroSD card — flash Raspberry Pi OS Lite (64-bit)</strong></p>
+<p>Use Raspberry Pi Imager on your laptop. Choose "Raspberry Pi OS Lite (64-bit)" — no desktop needed, this is a headless sensor box. In the settings gear:</p>
+<ul style="font-size:13px;">
+  <li><strong>Hostname:</strong> <code>solaris</code></li>
+  <li><strong>User:</strong> <code>fuze</code> / password: <code>Fuze47101</code> (matches your hotspot pattern)</li>
+  <li><strong>WiFi:</strong> <code>ISEEYOU2</code> / <code>Fuze47101</code> (home) — add <code>FX4</code> / <code>Jetflow101</code> later</li>
+  <li><strong>SSH:</strong> Enable with password auth</li>
+  <li><strong>Locale:</strong> America/Denver, US keyboard</li>
+</ul>
+<p>Flash it, insert the card into the Pi 5.</p>
+</div>
+
+<div class="step">
+<p><span class="step-num">3</span><strong>Power on, find IP, SSH in</strong></p>
+<pre><code># From your laptop on the same network:
+ssh fuze@solaris.local
+# If mDNS doesn't resolve, check your router's client list for "solaris"
+
+# First boot — update and install dependencies:
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y python3-pip python3-venv git i2c-tools
+
+# Enable SPI and I2C:
+sudo raspi-config nonint do_spi 0
+sudo raspi-config nonint do_i2c 0
+sudo reboot</code></pre>
+</div>
+
+<div class="step">
+<p><span class="step-num">4</span><strong>Python environment</strong></p>
+<pre><code># After reboot, SSH back in:
+cd ~
+python3 -m venv solaris-env
+source solaris-env/bin/activate
+
+pip install spidev smbus2 requests adafruit-circuitpython-sht4x adafruit-circuitpython-mlx90640
+# spidev → MAX31855 (raw SPI)
+# smbus2 → backup I2C if needed
+# adafruit libs → SHT41 + MLX90640 via CircuitPython</code></pre>
+</div>
+
+<!-- ============================================ -->
+<h2>Phase 2 — Wiring</h2>
+<!-- ============================================ -->
+
+<div class="info">
+<strong>Pi 5 GPIO is 3.3V logic, same pinout as Pi 4.</strong> The MAX31855 breakouts run on 3.3V. The SHT41 QWIIC boards are 3.3V native. Everything is voltage-compatible — no level shifters needed.
+</div>
+
+<h3>GPIO Pin Map — All Connections</h3>
+
+<div class="wiring-diagram">
+<table>
+<thead>
+<tr><th>Device</th><th>Device Pin</th><th>→</th><th>Pi 5 Pin</th><th>GPIO #</th><th>Bus</th><th>Wire Color (suggested)</th></tr>
+</thead>
+<tbody>
+
+<tr><td colspan="7" style="background:#f3f4f6;font-weight:bold;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#7c3aed;">SPI — MAX31855 Thermocouple Amplifiers</td></tr>
+
+<tr>
+  <td>MAX31855 #1 (TC-A)</td>
+  <td>VCC</td><td>→</td>
+  <td>Pin 1</td><td><span class="pin pin-pwr">3V3</span></td><td>Power</td><td>Red</td>
+</tr>
+<tr>
+  <td>MAX31855 #1 (TC-A)</td>
+  <td>GND</td><td>→</td>
+  <td>Pin 6</td><td><span class="pin pin-gnd">GND</span></td><td>Power</td><td>Black</td>
+</tr>
+<tr>
+  <td>MAX31855 #1 (TC-A)</td>
+  <td>CLK (SCK)</td><td>→</td>
+  <td>Pin 23</td><td><span class="pin pin-spi">GPIO 11</span></td><td>SPI0 SCLK</td><td>Yellow</td>
+</tr>
+<tr>
+  <td>MAX31855 #1 (TC-A)</td>
+  <td>DO (MISO/SO)</td><td>→</td>
+  <td>Pin 21</td><td><span class="pin pin-spi">GPIO 9</span></td><td>SPI0 MISO</td><td>Orange</td>
+</tr>
+<tr>
+  <td>MAX31855 #1 (TC-A)</td>
+  <td>CS</td><td>→</td>
+  <td>Pin 24</td><td><span class="pin pin-spi">GPIO 8</span></td><td>SPI0 CE0</td><td>Blue</td>
+</tr>
+
+<tr><td colspan="7" style="height:4px;padding:0;background:#e5e7eb;"></td></tr>
+
+<tr>
+  <td>MAX31855 #2 (TC-B)</td>
+  <td>VCC</td><td>→</td>
+  <td>Pin 17</td><td><span class="pin pin-pwr">3V3</span></td><td>Power</td><td>Red</td>
+</tr>
+<tr>
+  <td>MAX31855 #2 (TC-B)</td>
+  <td>GND</td><td>→</td>
+  <td>Pin 14</td><td><span class="pin pin-gnd">GND</span></td><td>Power</td><td>Black</td>
+</tr>
+<tr>
+  <td>MAX31855 #2 (TC-B)</td>
+  <td>CLK (SCK)</td><td>→</td>
+  <td>Pin 23</td><td><span class="pin pin-spi">GPIO 11</span></td><td>SPI0 SCLK (shared)</td><td>Yellow</td>
+</tr>
+<tr>
+  <td>MAX31855 #2 (TC-B)</td>
+  <td>DO (MISO/SO)</td><td>→</td>
+  <td>Pin 21</td><td><span class="pin pin-spi">GPIO 9</span></td><td>SPI0 MISO (shared)</td><td>Orange</td>
+</tr>
+<tr>
+  <td>MAX31855 #2 (TC-B)</td>
+  <td>CS</td><td>→</td>
+  <td>Pin 26</td><td><span class="pin pin-spi">GPIO 7</span></td><td>SPI0 CE1</td><td>Green</td>
+</tr>
+
+<tr><td colspan="7" style="background:#f3f4f6;font-weight:bold;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#0369a1;">I²C — SHT41 + MLX90640</td></tr>
+
+<tr>
+  <td>SHT41 (air gap)</td>
+  <td>SDA</td><td>→</td>
+  <td>Pin 3</td><td><span class="pin pin-i2c">GPIO 2</span></td><td>I2C1 SDA</td><td>White</td>
+</tr>
+<tr>
+  <td>SHT41 (air gap)</td>
+  <td>SCL</td><td>→</td>
+  <td>Pin 5</td><td><span class="pin pin-i2c">GPIO 3</span></td><td>I2C1 SCL</td><td>Gray</td>
+</tr>
+<tr>
+  <td>SHT41 (air gap)</td>
+  <td>VCC</td><td>→</td>
+  <td>Pin 1</td><td><span class="pin pin-pwr">3V3</span></td><td>Power</td><td>Red</td>
+</tr>
+<tr>
+  <td>SHT41 (air gap)</td>
+  <td>GND</td><td>→</td>
+  <td>Pin 9</td><td><span class="pin pin-gnd">GND</span></td><td>Power</td><td>Black</td>
+</tr>
+
+<tr><td colspan="7" style="height:4px;padding:0;background:#e5e7eb;"></td></tr>
+
+<tr>
+  <td>MLX90640 (IR cam)</td>
+  <td>SDA</td><td>→</td>
+  <td>Pin 3</td><td><span class="pin pin-i2c">GPIO 2</span></td><td>I2C1 SDA (shared)</td><td>White</td>
+</tr>
+<tr>
+  <td>MLX90640 (IR cam)</td>
+  <td>SCL</td><td>→</td>
+  <td>Pin 5</td><td><span class="pin pin-i2c">GPIO 3</span></td><td>I2C1 SCL (shared)</td><td>Gray</td>
+</tr>
+<tr>
+  <td>MLX90640 (IR cam)</td>
+  <td>VCC</td><td>→</td>
+  <td>Pin 17</td><td><span class="pin pin-pwr">3V3</span></td><td>Power</td><td>Red</td>
+</tr>
+<tr>
+  <td>MLX90640 (IR cam)</td>
+  <td>GND</td><td>→</td>
+  <td>Pin 20</td><td><span class="pin pin-gnd">GND</span></td><td>Power</td><td>Black</td>
+</tr>
+
+<tr><td colspan="7" style="background:#f3f4f6;font-weight:bold;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#166534;">GPIO — Pump Control</td></tr>
+
+<tr>
+  <td>N-channel MOSFET gate (IRLZ44N or 2N7000)</td>
+  <td>Gate</td><td>→</td>
+  <td>Pin 32</td><td><span class="pin pin-gpio">GPIO 12</span></td><td>PWM0</td><td>Purple</td>
+</tr>
+<tr>
+  <td>MOSFET drain → Pump (−)</td>
+  <td>—</td><td>→</td>
+  <td colspan="4">Pump(+) to 12V PSU(+), MOSFET source to 12V PSU GND, flyback diode across pump terminals</td>
+</tr>
+
+</tbody>
+</table>
+</div>
+
+<div class="warn">
+<strong>I²C addresses (no conflict):</strong> SHT41 = <code>0x44</code>, MLX90640 = <code>0x33</code>. Both on I2C-1, no address collision. After wiring, verify with <code>i2cdetect -y 1</code> — you should see both devices.
+</div>
+
+<h3>Visual Wiring Summary</h3>
+
+<div class="wiring-diagram">
+<svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;font-family:-apple-system,sans-serif;">
+  <!-- Pi 5 board -->
+  <rect x="320" y="20" width="260" height="160" rx="10" fill="#166534" stroke="#14532d" stroke-width="2"/>
+  <text x="450" y="48" text-anchor="middle" font-size="14" fill="white" font-weight="bold">RASPBERRY PI 5</text>
+  <text x="450" y="65" text-anchor="middle" font-size="10" fill="#86efac">solaris.local</text>
+
+  <!-- GPIO header representation -->
+  <rect x="340" y="75" width="220" height="90" rx="4" fill="#15803d" stroke="#14532d"/>
+  <text x="450" y="95" text-anchor="middle" font-size="10" fill="#bbf7d0" font-weight="bold">40-PIN GPIO HEADER</text>
+
+  <!-- SPI pins -->
+  <text x="360" y="115" font-size="9" fill="#ddd6fe" font-weight="bold">SPI0:</text>
+  <text x="360" y="128" font-size="8" fill="#c4b5fd">SCLK=Pin23 · MISO=Pin21</text>
+  <text x="360" y="139" font-size="8" fill="#c4b5fd">CE0=Pin24 · CE1=Pin26</text>
+
+  <!-- I2C pins -->
+  <text x="460" y="115" font-size="9" fill="#93c5fd" font-weight="bold">I²C-1:</text>
+  <text x="460" y="128" font-size="8" fill="#93c5fd">SDA=Pin3 · SCL=Pin5</text>
+
+  <!-- PWM pin -->
+  <text x="460" y="142" font-size="9" fill="#86efac" font-weight="bold">PWM:</text>
+  <text x="460" y="153" font-size="8" fill="#86efac">GPIO12=Pin32</text>
+
+  <!-- MAX31855 #1 -->
+  <rect x="30" y="240" width="180" height="80" rx="8" fill="#7c3aed" stroke="#6d28d9" stroke-width="1.5"/>
+  <text x="120" y="265" text-anchor="middle" font-size="12" fill="white" font-weight="bold">MAX31855 #1</text>
+  <text x="120" y="280" text-anchor="middle" font-size="10" fill="#ddd6fe">SPI0 · CE0 (Pin 24)</text>
+  <text x="120" y="295" text-anchor="middle" font-size="9" fill="#ddd6fe">/dev/spidev0.0</text>
+  <text x="120" y="310" text-anchor="middle" font-size="9" fill="#fbbf24" font-weight="bold">← TC-A (heat plate)</text>
+
+  <!-- MAX31855 #2 -->
+  <rect x="30" y="340" width="180" height="80" rx="8" fill="#7c3aed" stroke="#6d28d9" stroke-width="1.5"/>
+  <text x="120" y="365" text-anchor="middle" font-size="12" fill="white" font-weight="bold">MAX31855 #2</text>
+  <text x="120" y="380" text-anchor="middle" font-size="10" fill="#ddd6fe">SPI0 · CE1 (Pin 26)</text>
+  <text x="120" y="395" text-anchor="middle" font-size="9" fill="#ddd6fe">/dev/spidev0.1</text>
+  <text x="120" y="410" text-anchor="middle" font-size="9" fill="#fbbf24" font-weight="bold">← TC-B (heat plate)</text>
+
+  <!-- SHT41 -->
+  <rect x="360" y="260" width="180" height="70" rx="8" fill="#0369a1" stroke="#075985" stroke-width="1.5"/>
+  <text x="450" y="285" text-anchor="middle" font-size="12" fill="white" font-weight="bold">SHT41 T/H</text>
+  <text x="450" y="300" text-anchor="middle" font-size="10" fill="#bae6fd">I²C · addr 0x44</text>
+  <text x="450" y="315" text-anchor="middle" font-size="9" fill="#bae6fd">45mm air gap sensor</text>
+
+  <!-- MLX90640 -->
+  <rect x="360" y="350" width="180" height="70" rx="8" fill="#1e40af" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="450" y="375" text-anchor="middle" font-size="12" fill="white" font-weight="bold">MLX90640 IR CAM</text>
+  <text x="450" y="390" text-anchor="middle" font-size="10" fill="#93c5fd">I²C · addr 0x33</text>
+  <text x="450" y="405" text-anchor="middle" font-size="9" fill="#93c5fd">optional thermal heatmap</text>
+
+  <!-- Pump -->
+  <rect x="660" y="260" width="200" height="80" rx="8" fill="#4338ca" stroke="#3730a3" stroke-width="1.5"/>
+  <text x="760" y="285" text-anchor="middle" font-size="12" fill="white" font-weight="bold">PERISTALTIC PUMP</text>
+  <text x="760" y="300" text-anchor="middle" font-size="10" fill="#c7d2fe">12V via MOSFET</text>
+  <text x="760" y="315" text-anchor="middle" font-size="10" fill="#c7d2fe">GPIO 12 (PWM0)</text>
+  <text x="760" y="330" text-anchor="middle" font-size="9" fill="#a5b4fc">INTLLAB DP-DIY</text>
+
+  <!-- PID + SSR (not Pi-controlled) -->
+  <rect x="660" y="380" width="200" height="80" rx="8" fill="#b91c1c" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="760" y="405" text-anchor="middle" font-size="12" fill="white" font-weight="bold">PID + SSR</text>
+  <text x="760" y="420" text-anchor="middle" font-size="10" fill="#fecaca">Inkbird ITC-100VH</text>
+  <text x="760" y="435" text-anchor="middle" font-size="10" fill="#fecaca">Controls cartridge heater</text>
+  <text x="760" y="450" text-anchor="middle" font-size="9" fill="#fca5a5">NOT connected to Pi</text>
+
+  <!-- Connection lines -->
+  <!-- SPI to MAX31855s -->
+  <path d="M 210 270 Q 280 200 340 150" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-dasharray="6,3"/>
+  <path d="M 210 370 Q 280 300 340 160" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-dasharray="6,3"/>
+
+  <!-- I2C to SHT41 + MLX -->
+  <line x1="450" y1="180" x2="450" y2="260" stroke="#0369a1" stroke-width="2.5" stroke-dasharray="6,3"/>
+  <line x1="450" y1="330" x2="450" y2="350" stroke="#1e40af" stroke-width="2.5" stroke-dasharray="6,3"/>
+
+  <!-- PWM to pump -->
+  <path d="M 560 150 Q 650 200 660 280" stroke="#166534" stroke-width="2.5" fill="none" stroke-dasharray="6,3"/>
+
+  <!-- Labels -->
+  <text x="270" y="215" font-size="10" fill="#7c3aed" font-weight="bold" transform="rotate(-30,270,215)">SPI0</text>
+  <text x="435" y="230" font-size="10" fill="#0369a1" font-weight="bold">I²C-1</text>
+  <text x="610" y="210" font-size="10" fill="#166534" font-weight="bold" transform="rotate(30,610,210)">PWM</text>
+
+  <!-- 12V PSU -->
+  <rect x="660" y="480" width="200" height="30" rx="4" fill="#374151" stroke="#1f2937"/>
+  <text x="760" y="500" text-anchor="middle" font-size="11" fill="white" font-weight="bold">12V 60W PSU → Pump + Pi (via buck)</text>
+
+</svg>
+</div>
+
+<div class="info">
+<strong>The PID + SSR is a self-contained loop.</strong> The Inkbird ITC-100VH has its own K-type TC probe stuck in the vaporizer block. It reads the block temp and switches the SSR to bang the cartridge heater on/off. The Pi does NOT control the heater — it just reads the two thermocouples on the heat plate above. This is safer: even if the Pi crashes, the PID keeps the vaporizer at 200°C and the thermal fuse protects against runaway.
+</div>
+
+<!-- ============================================ -->
+<h2>Phase 3 — Physical Assembly Sequence</h2>
+<!-- ============================================ -->
+
+<div class="step">
+<p><span class="step-num">1</span><strong>Mount vaporizer block to base plate</strong></p>
+<p>The stainless steel fixture has the base plate with the ~5" circular opening. The aluminum vaporizer block sits at the bottom of the 3" aluminum post. The cartridge heater slides into the blind bore in the vaporizer block — slip fit. Insert the PID's K-type TC probe into the 1/8" hole on the opposite side, pack with MX-6 thermal paste. The thermal fuse (240°C) wires in series between one leg of the cartridge heater and the SSR output — crimp or solder, then heat-shrink.</p>
+</div>
+
+<div class="step">
+<p><span class="step-num">2</span><strong>Route water drip line</strong></p>
+<p>Cut ~3 feet of PTFE tubing (1/8" OD). Thread it down through the top of the aluminum post, all the way to the vaporizer block's drip well at the bottom. The top end exits the post and runs to the peristaltic pump output. The pump input connects to the DI water reservoir with another length of silicone tubing. Secure with hose clamps at both pump barbs.</p>
+</div>
+
+<div class="step">
+<p><span class="step-num">3</span><strong>Install heat plate + thermocouple pads</strong></p>
+<p>The black-anodized 175×175mm aluminum heat plate sits on top of the post assembly, resting on the PC tray or directly on the stainless bracket. Bond TC-A and TC-B to the underside of the heat plate at opposite quadrants (50mm+ apart). Use MX-6 thermal paste in a small drilled well or tape them with high-temp Kapton tape and a dab of MX-6. Route the TC wires out through the PC tray wire channels.</p>
+</div>
+
+<div class="step">
+<p><span class="step-num">4</span><strong>Wire MAX31855 breakouts to thermocouples</strong></p>
+<p>Each MAX31855 breakout has screw terminals for the thermocouple leads (+ and −). K-type polarity: yellow wire = (+), red wire = (−) — yes, red is negative on K-type, that's not a typo. Connect TC-A to MAX31855 #1, TC-B to MAX31855 #2. Then wire both breakouts to the Pi GPIO per the pin table above. Both share SCLK and MISO, but each gets its own CS line (CE0 vs CE1).</p>
+<div class="warn" style="margin-top:8px;">
+<strong>K-type polarity gotcha:</strong> Yellow = positive, Red = negative. This is backwards from what you'd expect. If you get it reversed, the MAX31855 will still read temperature — but it'll show decreasing values when the plate heats up. If your readings go down when the lamp is on, swap the leads at the screw terminal.
+</div>
+</div>
+
+<div class="step">
+<p><span class="step-num">5</span><strong>Mount SHT41 in the air gap</strong></p>
+<p>The SHT41 goes on a small standoff in the 45mm air gap between the fabric and the heat plate. Use a 3D-printed bracket or just zip-tie it to a piece of wire bent into an L-shape, positioned centrally under where the fabric will be. Connect via the QWIIC/Stemma QT cable — it daisy-chains: Pi I²C header → SHT41 → MLX90640 (if installed). Run the cable out the side of the tray.</p>
+</div>
+
+<div class="step">
+<p><span class="step-num">6</span><strong>Mount MLX90640 (optional)</strong></p>
+<p>The thermal camera looks down at the heat plate from just below the fabric plane. Mount it pointing downward, ~80-100mm above the plate, angled so the 32×24 pixel array covers the plate surface. Its 110° FOV at 100mm covers roughly 220×220mm — plenty for the 175mm plate. Same I²C bus as the SHT41, different address (0x33 vs 0x44).</p>
+</div>
+
+<div class="step">
+<p><span class="step-num">7</span><strong>Wire pump circuit</strong></p>
+<p>The peristaltic pump is 12V. The Pi's GPIO is 3.3V. You need a switching transistor or MOSFET between them:</p>
+<ul style="font-size:13px;">
+  <li>MOSFET gate → 1kΩ resistor → GPIO 12 (Pin 32)</li>
+  <li>MOSFET drain → Pump (−) terminal</li>
+  <li>MOSFET source → 12V PSU ground</li>
+  <li>Pump (+) → 12V PSU (+)</li>
+  <li><strong>Flyback diode</strong> (1N4007) across the pump terminals — cathode (stripe) to pump (+), anode to pump (−). This absorbs the inductive kick when the motor switches off.</li>
+  <li>10kΩ pull-down resistor from gate to ground (keeps pump off during Pi boot)</li>
+</ul>
+<p>If you don't have a MOSFET handy, you can run the pump continuously (just plug it into 12V) for initial testing. PWM control is nice-to-have for adjusting flow rate, but the INTLLAB has its own manual speed knob.</p>
+</div>
+
+<div class="step">
+<p><span class="step-num">8</span><strong>Wire PID + SSR (standalone loop, not Pi-connected)</strong></p>
+<p>This is a separate mains-voltage circuit — completely independent from the Pi:</p>
+<ul style="font-size:13px;">
+  <li>Inkbird ITC-100VH: TC input ← PID K-type probe (in vaporizer block), relay output → SSR control (3-32V DC)</li>
+  <li>SSR-40DA: DC input (pins 3+4) ← PID relay output, AC output (pins 1+2) ← 120V mains in series with cartridge heater</li>
+  <li>Thermal fuse (240°C, 10A): wire in series between one AC leg and the cartridge heater</li>
+  <li>Mount SSR on finned heatsink — it'll dissipate ~3W when switching 300W</li>
+  <li>Set PID: SV=200°C, alarm=220°C</li>
+</ul>
+</div>
+
+<div class="step">
+<p><span class="step-num">9</span><strong>Embroidery hoop + lamp mount</strong></p>
+<p>The 6" (150mm) embroidery hoop clamps the test fabric. Position it 45mm above the heat plate (use spacers or the stainless fixture's built-in shelf). The IR lamp mounts 200mm above the fabric plane in the ceramic socket/reflector housing. The stainless fixture's column should position this correctly — measure from the fabric surface to the bulb center.</p>
+</div>
+
+<!-- ============================================ -->
+<h2>Phase 4 — Verify Wiring</h2>
+<!-- ============================================ -->
+
+<div class="step">
+<p><span class="step-num">10</span><strong>Smoke test — check all sensors before powering the heater</strong></p>
+<pre><code># SSH into the Pi
+ssh fuze@solaris.local
+source ~/solaris-env/bin/activate
+
+# Check I2C devices:
+i2cdetect -y 1
+# Expected: 0x33 (MLX90640) and 0x44 (SHT41)
+# If MLX not installed, just 0x44
+
+# Check SPI devices exist:
+ls /dev/spidev0.*
+# Expected: /dev/spidev0.0  /dev/spidev0.1
+
+# Quick SHT41 read:
+python3 -c "
+import board, adafruit_sht4x
+sht = adafruit_sht4x.SHT4x(board.I2C())
+t, h = sht.measurements
+print(f'Air temp: {t:.1f}°C  Humidity: {h:.1f}%')
+"
+
+# Quick MAX31855 read (raw SPI):
+python3 -c "
+import spidev
+spi = spidev.SpiDev()
+for cs in [0, 1]:
+    spi.open(0, cs)
+    spi.max_speed_hz = 5000000
+    raw = spi.readbytes(4)
+    val = (raw[0] << 24 | raw[1] << 16 | raw[2] << 8 | raw[3])
+    if val & 0x7:
+        print(f'TC on CE{cs}: FAULT (check wiring) — code {val & 0x7}')
+    else:
+        tc_c = ((val >> 18) & 0x3FFF)
+        if tc_c & 0x2000: tc_c -= 16384
+        tc_c *= 0.25
+        print(f'TC on CE{cs}: {tc_c:.2f}°C')
+    spi.close()
+"</code></pre>
+<p>Both TCs should read room temperature (~20-25°C). The SHT41 should read ambient temp and ~30-50% humidity. If a MAX31855 returns a fault code: 1=open circuit (TC not connected), 2=short to GND, 4=short to VCC.</p>
+</div>
+
+<!-- ============================================ -->
+<h2>Phase 5 — Solaris Daemon</h2>
+<!-- ============================================ -->
+
+<p>Here's the Python daemon that reads all sensors at 1 Hz and POSTs to FUZE Atlas. Save as <code>~/solaris_daemon.py</code>:</p>
+
+<pre><code>#!/usr/bin/env python3
+"""
+Solaris FZ-500 — Sensor Daemon
+Reads 2× MAX31855 (SPI), SHT41 (I²C), optional MLX90640 (I²C)
+POSTs time-series to FUZE Atlas /api/admin/solaris-tests/[id]/ingest
+"""
+
+import time, json, sys, os, signal
+import spidev
+import board
+import adafruit_sht4x
+import requests
+
+# ── Config ──────────────────────────────────────────────
+ATLAS_BASE    = os.environ.get("ATLAS_URL", "https://atlas.fuze47.com")
+TEST_ID       = os.environ.get("SOLARIS_TEST_ID", "")
+BEARER_TOKEN  = os.environ.get("ATLAS_TOKEN", "")
+SAMPLE_HZ     = 1          # 1 sample per second
+RUN_DURATION  = 600        # 10 minutes = 600 seconds
+BUFFER_SIZE   = 60         # POST every 60 samples (1 min)
+# ────────────────────────────────────────────────────────
+
+# ── SPI: MAX31855 ×2 ───────────────────────────────────
+def read_max31855(bus, cs):
+    """Read temperature from MAX31855 on SPI bus/cs. Returns (temp_c, fault)."""
+    spi = spidev.SpiDev()
+    spi.open(bus, cs)
+    spi.max_speed_hz = 5_000_000
+    spi.mode = 0
+    raw = spi.readbytes(4)
+    spi.close()
+
+    val = (raw[0] << 24 | raw[1] << 16 | raw[2] << 8 | raw[3])
+    fault = val & 0x7
+    if fault:
+        return None, fault
+
+    tc_raw = (val >> 18) & 0x3FFF
+    if tc_raw & 0x2000:
+        tc_raw -= 16384
+    return tc_raw * 0.25, 0
+
+# ── I²C: SHT41 ─────────────────────────────────────────
+i2c = board.I2C()
+sht = adafruit_sht4x.SHT4x(i2c)
+sht.mode = adafruit_sht4x.Mode.NOHEAT_HIGHPREC
+
+# ── Optional: MLX90640 ──────────────────────────────────
+mlx = None
+try:
+    import adafruit_mlx90640
+    mlx = adafruit_mlx90640.MLX90640(i2c)
+    mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_2_HZ
+    print("[OK] MLX90640 thermal camera detected")
+except Exception:
+    print("[--] MLX90640 not found — running without thermal camera")
+
+# ── Graceful shutdown ───────────────────────────────────
+running = True
+def handle_signal(sig, frame):
+    global running
+    running = False
+    print("\n[!!] Shutting down...")
+signal.signal(signal.SIGINT, handle_signal)
+signal.signal(signal.SIGTERM, handle_signal)
+
+# ── POST buffer to Atlas ────────────────────────────────
+def post_to_atlas(samples):
+    if not TEST_ID or not BEARER_TOKEN:
+        return  # local-only mode
+    url = f"{ATLAS_BASE}/api/admin/solaris-tests/{TEST_ID}/ingest"
+    try:
+        resp = requests.post(url, json={"samples": samples}, headers={
+            "Authorization": f"Bearer {BEARER_TOKEN}",
+            "Content-Type": "application/json"
+        }, timeout=10)
+        if resp.status_code == 200:
+            print(f"  [POST] {len(samples)} samples → Atlas OK")
+        else:
+            print(f"  [POST] Atlas returned {resp.status_code}: {resp.text[:100]}")
+    except Exception as e:
+        print(f"  [POST] Failed: {e}")
+
+# ── Main loop ───────────────────────────────────────────
+def main():
+    print("=" * 60)
+    print("  SOLARIS FZ-500 — Sensor Daemon")
+    print(f"  Duration: {RUN_DURATION}s @ {SAMPLE_HZ} Hz")
+    print(f"  Atlas: {'CONNECTED' if TEST_ID else 'LOCAL ONLY (no TEST_ID)'}")
+    print("=" * 60)
+
+    buffer = []
+    t_start = time.time()
+    sample_n = 0
+
+    while running and sample_n < RUN_DURATION * SAMPLE_HZ:
+        t0 = time.time()
+        elapsed = t0 - t_start
+
+        # Read thermocouples
+        tc_a, fault_a = read_max31855(0, 0)
+        tc_b, fault_b = read_max31855(0, 1)
+
+        # Read SHT41
+        try:
+            air_t, air_h = sht.measurements
+        except Exception:
+            air_t, air_h = None, None
+
+        # Read MLX90640 (optional, slow — every 5th sample)
+        thermal_frame = None
+        if mlx and sample_n % 5 == 0:
+            try:
+                frame = [0] * 768
+                mlx.getFrame(frame)
+                thermal_frame = [round(p, 1) for p in frame]
+            except Exception:
+                pass
+
+        sample = {
+            "t": round(elapsed, 2),
+            "n": sample_n,
+            "tc_a": round(tc_a, 2) if tc_a is not None else None,
+            "tc_b": round(tc_b, 2) if tc_b is not None else None,
+            "tc_a_fault": fault_a if fault_a else None,
+            "tc_b_fault": fault_b if fault_b else None,
+            "air_temp_c": round(air_t, 2) if air_t is not None else None,
+            "air_rh_pct": round(air_h, 1) if air_h is not None else None,
+        }
+        if thermal_frame:
+            sample["thermal"] = thermal_frame
+
+        buffer.append(sample)
+        sample_n += 1
+
+        # Console output
+        tc_a_s = f"{tc_a:.1f}°C" if tc_a else f"FAULT:{fault_a}"
+        tc_b_s = f"{tc_b:.1f}°C" if tc_b else f"FAULT:{fault_b}"
+        air_s  = f"{air_t:.1f}°C/{air_h:.0f}%" if air_t else "ERR"
+        pct = int(elapsed / RUN_DURATION * 100)
+        print(f"  [{pct:3d}%] {elapsed:6.1f}s  TC-A={tc_a_s}  TC-B={tc_b_s}  Air={air_s}")
+
+        # Flush buffer
+        if len(buffer) >= BUFFER_SIZE:
+            post_to_atlas(buffer)
+            buffer = []
+
+        # Maintain 1 Hz cadence
+        dt = time.time() - t0
+        if dt < 1.0 / SAMPLE_HZ:
+            time.sleep(1.0 / SAMPLE_HZ - dt)
+
+    # Final flush
+    if buffer:
+        post_to_atlas(buffer)
+
+    print("\n" + "=" * 60)
+    print("  RUN COMPLETE")
+    print(f"  Total samples: {sample_n}")
+    print(f"  Duration: {time.time() - t_start:.1f}s")
+    print("=" * 60)
+
+if __name__ == "__main__":
+    main()</code></pre>
+
+<h3>Systemd Service (auto-start on boot)</h3>
+
+<pre><code># Create the service file:
+sudo tee /etc/systemd/system/solaris.service &lt;&lt;'EOF'
+[Unit]
+Description=Solaris FZ-500 Sensor Daemon
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=fuze
+WorkingDirectory=/home/fuze
+ExecStart=/home/fuze/solaris-env/bin/python3 /home/fuze/solaris_daemon.py
+Restart=on-failure
+RestartSec=10
+Environment=ATLAS_URL=https://atlas.fuze47.com
+Environment=SOLARIS_TEST_ID=
+Environment=ATLAS_TOKEN=
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Enable but don't start yet (no test ID configured):
+sudo systemctl daemon-reload
+sudo systemctl enable solaris.service
+
+# To run a test manually:
+SOLARIS_TEST_ID=test_001 ATLAS_TOKEN=your_token python3 ~/solaris_daemon.py
+
+# Or just run without Atlas (local console output only):
+python3 ~/solaris_daemon.py</code></pre>
+
+<!-- ============================================ -->
+<h2>Quick Reference — Assembly Checklist</h2>
+<!-- ============================================ -->
+
+<table>
+<thead><tr><th>#</th><th>Task</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Pi 5 heatsink + fan + thermal paste</td><td>☐</td></tr>
+<tr><td>2</td><td>Flash SD card (Pi OS Lite 64-bit, hostname=solaris)</td><td>☐</td></tr>
+<tr><td>3</td><td>Boot Pi, SSH in, install deps, enable SPI+I2C</td><td>☐</td></tr>
+<tr><td>4</td><td>Wire MAX31855 #1 → SPI CE0 (TC-A)</td><td>☐</td></tr>
+<tr><td>5</td><td>Wire MAX31855 #2 → SPI CE1 (TC-B)</td><td>☐</td></tr>
+<tr><td>6</td><td>Wire SHT41 → I²C (QWIIC cable)</td><td>☐</td></tr>
+<tr><td>7</td><td>Wire MLX90640 → I²C (optional, daisy-chain)</td><td>☐</td></tr>
+<tr><td>8</td><td>Bond TC-A + TC-B to heat plate underside (MX-6)</td><td>☐</td></tr>
+<tr><td>9</td><td>Mount SHT41 in air gap (45mm above plate)</td><td>☐</td></tr>
+<tr><td>10</td><td>Cartridge heater → vaporizer block (slip fit)</td><td>☐</td></tr>
+<tr><td>11</td><td>PID TC → vaporizer block (1/8" hole + paste)</td><td>☐</td></tr>
+<tr><td>12</td><td>Thermal fuse (240°C) in series with heater</td><td>☐</td></tr>
+<tr><td>13</td><td>Wire PID → SSR → cartridge heater (120V mains)</td><td>☐</td></tr>
+<tr><td>14</td><td>Mount SSR on heatsink</td><td>☐</td></tr>
+<tr><td>15</td><td>Route PTFE drip tube through post to vaporizer well</td><td>☐</td></tr>
+<tr><td>16</td><td>Pump → tubing → reservoir (silicone tube + clamps)</td><td>☐</td></tr>
+<tr><td>17</td><td>Wire pump via MOSFET to GPIO 12 (or direct 12V for now)</td><td>☐</td></tr>
+<tr><td>18</td><td>GFCI outlet for mains heater circuit</td><td>☐</td></tr>
+<tr><td>19</td><td>i2cdetect -y 1 → see 0x44 (+ 0x33 if MLX)</td><td>☐</td></tr>
+<tr><td>20</td><td>Run smoke test script — both TCs read room temp</td><td>☐</td></tr>
+<tr><td>21</td><td>Deploy solaris_daemon.py, test local run</td><td>☐</td></tr>
+<tr><td>22</td><td>Mount IR lamp 200mm above fabric plane</td><td>☐</td></tr>
+<tr><td>23</td><td>Embroidery hoop with test fabric, 45mm above plate</td><td>☐</td></tr>
+<tr><td>24</td><td>First full test run (lamp ON, no steam first)</td><td>☐</td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+<strong>Recommended order of operations:</strong> Get the Pi reading sensors first (steps 1-10, 19-21) before wiring any mains voltage (steps 11-14, 18). Validate the data pipeline end-to-end with just the IR lamp heating the plate, no steam. Once you're confident the TCs and SHT41 are reading correctly, add the steam subsystem.
+</div>
+
+<p style="text-align:center;color:#667085;font-size:11px;margin-top:40px;">
+FUZE Biotech · Solaris FZ-500 Assembly Guide · April 2026<br>
+1895 West 2100 South · Salt Lake City, UT 84119 USA
+</p>
+
+</body>
+</html>

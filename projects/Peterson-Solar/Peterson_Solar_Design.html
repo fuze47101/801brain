@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peterson Property Solar System Design — Erda, Utah</title>
+<style>
+  :root {
+    --navy: #1a2332;
+    --gold: #d4a843;
+    --slate: #2d3748;
+    --light: #f7f8fa;
+    --accent: #3b82f6;
+    --green: #22c55e;
+    --orange: #f59e0b;
+    --red: #ef4444;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--light); color: #1a1a1a; line-height: 1.7; }
+
+  .cover {
+    background: linear-gradient(135deg, var(--navy) 0%, #2a3f5f 50%, var(--slate) 100%);
+    color: white; padding: 80px 60px; min-height: 50vh; display: flex; flex-direction: column; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .cover::before {
+    content: ''; position: absolute; top: -50%; right: -20%; width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(212,168,67,0.15) 0%, transparent 70%); border-radius: 50%;
+  }
+  .cover h1 { font-size: 3em; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; }
+  .cover .subtitle { font-size: 1.3em; color: var(--gold); font-weight: 500; margin-bottom: 30px; }
+  .cover .meta { font-size: 0.95em; color: #94a3b8; }
+  .cover .meta span { margin-right: 30px; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 30px; }
+
+  h2 { font-size: 1.8em; color: var(--navy); margin: 50px 0 20px; padding-bottom: 10px; border-bottom: 3px solid var(--gold); }
+  h3 { font-size: 1.3em; color: var(--slate); margin: 30px 0 15px; }
+  h4 { font-size: 1.1em; color: #475569; margin: 20px 0 10px; }
+  p { margin-bottom: 15px; color: #334155; }
+
+  .highlight-box {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border-left: 5px solid var(--gold); padding: 25px 30px; margin: 25px 0;
+    border-radius: 0 12px 12px 0;
+  }
+  .highlight-box h4 { color: #92400e; margin-top: 0; }
+
+  .alert-box {
+    background: linear-gradient(135deg, #fef2f2, #fecaca);
+    border-left: 5px solid var(--red); padding: 25px 30px; margin: 25px 0;
+    border-radius: 0 12px 12px 0;
+  }
+  .alert-box h4 { color: #991b1b; margin-top: 0; }
+
+  .info-box {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-left: 5px solid var(--accent); padding: 25px 30px; margin: 25px 0;
+    border-radius: 0 12px 12px 0;
+  }
+  .info-box h4 { color: #1e40af; margin-top: 0; }
+
+  .success-box {
+    background: linear-gradient(135deg, #f0fdf4, #bbf7d0);
+    border-left: 5px solid var(--green); padding: 25px 30px; margin: 25px 0;
+    border-radius: 0 12px 12px 0;
+  }
+  .success-box h4 { color: #166534; margin-top: 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.95em; }
+  th { background: var(--navy); color: white; padding: 14px 18px; text-align: left; font-weight: 600; }
+  td { padding: 12px 18px; border-bottom: 1px solid #e2e8f0; }
+  tr:nth-child(even) { background: #f8fafc; }
+  tr:hover { background: #e2e8f0; }
+
+  .tier-card {
+    border: 2px solid #e2e8f0; border-radius: 16px; padding: 35px; margin: 30px 0;
+    background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    transition: transform 0.2s;
+  }
+  .tier-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+  .tier-card.tier1 { border-top: 5px solid var(--accent); }
+  .tier-card.tier2 { border-top: 5px solid var(--gold); }
+  .tier-card.tier3 { border-top: 5px solid var(--red); }
+  .tier-label {
+    display: inline-block; padding: 5px 16px; border-radius: 20px; font-size: 0.8em;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;
+  }
+  .tier1 .tier-label { background: #dbeafe; color: #1e40af; }
+  .tier2 .tier-label { background: #fef3c7; color: #92400e; }
+  .tier3 .tier-label { background: #fecaca; color: #991b1b; }
+
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px; margin: 25px 0;
+  }
+  .stat-card {
+    background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 20px; text-align: center;
+  }
+  .stat-card .number { font-size: 2em; font-weight: 800; color: var(--navy); }
+  .stat-card .label { font-size: 0.85em; color: #64748b; margin-top: 5px; }
+
+  .component-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;
+  }
+  .component-item {
+    background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px;
+  }
+  .component-item h4 { margin-top: 0; color: var(--navy); }
+  .component-item .spec { font-size: 0.9em; color: #64748b; }
+
+  .layout-diagram {
+    background: #1a2332; border-radius: 16px; padding: 30px; margin: 30px 0;
+    color: white; font-family: 'Courier New', monospace; overflow-x: auto;
+  }
+  .layout-diagram pre { font-size: 0.75em; line-height: 1.5; white-space: pre; }
+
+  .cost-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+  .cost-row:last-child { border-bottom: none; font-weight: 700; font-size: 1.1em; color: var(--navy); }
+  .cost-row .item { color: #475569; }
+  .cost-row .price { font-weight: 600; color: var(--navy); }
+
+  .timeline-item {
+    position: relative; padding-left: 30px; margin-bottom: 20px;
+    border-left: 3px solid var(--gold);
+  }
+  .timeline-item::before {
+    content: ''; position: absolute; left: -8px; top: 5px;
+    width: 13px; height: 13px; background: var(--gold); border-radius: 50%;
+  }
+  .timeline-item h4 { margin: 0; color: var(--navy); }
+  .timeline-item p { margin: 5px 0 0; font-size: 0.9em; }
+
+  @media (max-width: 768px) {
+    .cover { padding: 40px 25px; }
+    .cover h1 { font-size: 2em; }
+    .component-grid { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .page-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="cover">
+  <h1>Solar Array & Battery Storage<br>System Design</h1>
+  <div class="subtitle">Peterson Property — 1324 E Green Meadows Ct, Erda, Utah 84074</div>
+  <div class="meta">
+    <span>Prepared: April 1, 2026</span>
+    <span>Prepared for: Roger L. Peterson</span>
+    <span>5-Acre Residential Property</span>
+  </div>
+  <div class="meta" style="margin-top: 15px;">
+    <span>Dual-Axis Tracking • Japower All-in-One ESS • LiFePO₄ Storage • Direct China Sourcing</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ============ EXECUTIVE SUMMARY ============ -->
+<div class="alert-box" style="border-left: 6px solid #dc2626; background: #fef2f2;">
+  <h4 style="color:#991b1b;">IMPORTANT UPDATE — Federal Residential ITC Repealed</h4>
+  <p>The <strong>One Big Beautiful Bill Act (OBBBA)</strong>, signed July 4, 2025, terminated the 30% residential solar tax credit (Section 25D) effective <strong>December 31, 2025</strong>. Systems placed in service in 2026 by residential owners receive <strong>$0 federal credit</strong>. All economics in this revised document reflect the no-ITC residential case. The commercial ITC (Sec. 48E, 30%) remains available if the system is owned by a farm/ranch/LLC business and construction begins by <strong>July 4, 2026</strong> — a time-sensitive planning opportunity that could restore ~$17,000 of savings on Tier 3. Consult a CPA immediately if ag/business structuring is viable.</p>
+</div>
+
+<div class="success-box" style="border-left: 6px solid #059669; background: #f0fdf4;">
+  <h4 style="color:#065f46;">DESIGN REV 3 — Off-Grid Architecture (Mode A)</h4>
+  <p>Tier 3 has been restructured as a <strong>fully off-grid system</strong> integrating with Roger's existing diesel backup generator. Rocky Mountain Power interconnection (Schedule 137) is no longer pursued because (a) RMP's net billing pays only ~$0.04–$0.05/kWh for exports vs. ~$0.11–$0.12/kWh retail for imports, making export economics marginal; (b) off-grid mode eliminates the UL 1741 SA inverter-cert constraint and opens up materially cheaper China-sourced hybrid inverters (Sunwave SEI series with CSA listing now viable); and (c) Roger's existing diesel generator already solves the multi-day winter backup problem that would otherwise keep the grid connection relevant. Keep the RMP meter dormant behind a manual transfer switch as a "break glass" option, or drop service entirely.</p>
+</div>
+
+<h2>1. Executive Summary</h2>
+<p>This document presents a ground-up engineering design for a solar photovoltaic system with battery energy storage, installed along the south and west fencelines of the Peterson 5-acre property in Erda, Utah. The system uses dual-axis post-mounted solar trackers to maximize energy harvest throughout the day and across seasons.</p>
+
+<p>Three system tiers are presented — from a practical 50% offset through a full off-grid "zombie apocalypse" configuration — each with complete component specifications, layout diagrams, and cost projections. The design uses <strong>Japower All-in-One ESS units</strong> that integrate the hybrid inverter, LiFePO₄ battery bank, BMS, and cooling into a single weatherproof outdoor cabinet — eliminating the need for a dedicated battery shed and dramatically simplifying installation. All major components are sourced directly from Chinese manufacturers, leveraging 25 years of direct sourcing relationships.</p>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="number">~33,000</div>
+    <div class="label">Est. Annual kWh Usage</div>
+  </div>
+  <div class="stat-card">
+    <div class="number">5,579</div>
+    <div class="label">Peak Month kWh (Jun 2021)</div>
+  </div>
+  <div class="stat-card">
+    <div class="number">5.8</div>
+    <div class="label">Avg Peak Sun Hours/Day</div>
+  </div>
+  <div class="stat-card">
+    <div class="number">~$3,500</div>
+    <div class="label">Est. Annual Electric Bill</div>
+  </div>
+</div>
+
+<!-- ============ SITE ANALYSIS ============ -->
+<h2>2. Site Analysis</h2>
+
+<h3>2.1 Location & Solar Resource</h3>
+<p>Erda, Utah sits at approximately 40.6°N latitude, 112.3°W longitude, at ~4,400 ft elevation. The Tooele Valley benefits from excellent solar irradiance with low humidity, clear skies, and high-altitude UV intensity. The property is flat agricultural land with no shading obstructions along the perimeter — ideal for ground-mounted tracking arrays.</p>
+
+<table>
+  <tr><th>Parameter</th><th>Value</th><th>Notes</th></tr>
+  <tr><td>Annual Average Peak Sun Hours</td><td>5.8 hrs/day (fixed tilt)</td><td>Increases to 7.2–7.8 with dual-axis tracking</td></tr>
+  <tr><td>Summer Peak Sun Hours (Jun-Aug)</td><td>7.5–8.2 hrs/day (fixed)</td><td>9.0–10.5 hrs with tracking</td></tr>
+  <tr><td>Winter Peak Sun Hours (Dec-Feb)</td><td>3.5–4.2 hrs/day (fixed)</td><td>5.0–6.0 hrs with tracking</td></tr>
+  <tr><td>Annual GHI (Global Horizontal Irradiance)</td><td>~5.5 kWh/m²/day</td><td>Top 15% in continental US</td></tr>
+  <tr><td>Elevation</td><td>~4,400 ft / 1,340 m</td><td>Higher UV, slightly better panel performance</td></tr>
+  <tr><td>Average Ambient Temp (Summer)</td><td>85–95°F / 29–35°C</td><td>Panel derating ~5-8% at peak temps</td></tr>
+  <tr><td>Annual Snowfall</td><td>~50 inches</td><td>Trackers tilt to shed snow; minimal impact</td></tr>
+</table>
+
+<div class="info-box">
+  <h4>Tracking Advantage</h4>
+  <p>Dual-axis tracking systems in Utah's latitude and climate typically produce <strong>35–45% more energy</strong> than fixed-tilt ground-mount systems. This is the single biggest performance multiplier available, and with direct sourcing from China, the cost premium is very manageable. A 25 kW tracked array produces roughly the same annual energy as a 35–37 kW fixed-tilt system.</p>
+</div>
+
+<h3>2.2 Property Layout & Available Fenceline</h3>
+<p>The 5-acre parcel (approximately 467 ft × 467 ft if square, though the actual shape follows the cul-de-sac and road curves) provides two excellent fenceline runs for tracker installation:</p>
+
+<table>
+  <tr><th>Fenceline</th><th>Est. Length</th><th>Orientation</th><th>Solar Quality</th></tr>
+  <tr><td>South Perimeter</td><td>~420–460 ft</td><td>East-West run</td><td>★★★★★ — Full southern exposure, no obstructions</td></tr>
+  <tr><td>West Perimeter (Mountain Glen Rd)</td><td>~400–450 ft</td><td>North-South run</td><td>★★★★ — Excellent afternoon capture, road setback needed</td></tr>
+  <tr><td><strong>Total Available</strong></td><td><strong>~850–900 ft</strong></td><td></td><td>Room for 65–80+ tracker posts</td></tr>
+</table>
+
+<div class="layout-diagram">
+<pre>
+                    N
+                    ↑
+    ┌───────────── E Grn Mdws Ct (North boundary) ─────────────────┐
+    │                                                                │
+    │          ┌─────────────────────────────┐                       │
+    │          │      HOUSE & STRUCTURES     │                       │
+    │          │   (Main residence, garage,   │                       │
+    │          │    outbuildings, landscaping) │                       │
+    │          └─────────────────────────────┘                       │
+    │                                                                │
+W   │    Mountain Glen Rd                                            │   E
+E ──┤    ═══════════════                                             │
+S   │    │                                                           │
+T   │    │  WEST FENCELINE ARRAY                                     │
+    │    │  ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐              │
+    │    │  │T│ │T│ │T│ │T│ │T│ │T│ │T│ │T│ │T│ │T│  ...           │
+    │    │  └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘              │
+    │    │  (20-30 tracker posts along west fence)                   │
+    │    │                                                           │
+    │    │           OPEN FIELD / PASTURE                             │
+    │    │           (Agricultural use)                               │
+    │    │                                                           │
+    ├────┤───────────────────────────────────────────────────────────┤
+    │    SOUTH FENCELINE ARRAY                                       │
+    │    ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ...  │
+    │    │T│ │T│ │T│ │T│ │T│ │T│ │T│ │T│ │T│ │T│ │T│ │T│         │
+    │    └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘         │
+    │    (30-40 tracker posts along south fence)                     │
+    └────────────────────────────────────────────────────────────────┘
+                    S
+
+    ┌──────────────────────────────────────────┐
+    │ JAPOWER ALL-IN-ONE ESS (Power Center)      │
+    │ (On concrete pad near house elec. panel)   │
+    │ • 2× Japower 80kWh/30kW cabinets          │
+    │ • Inverter + battery + BMS built in        │
+    │ • No shed needed — IP65 outdoor rated      │
+    │ Approx location: NE corner near structures │
+    └──────────────────────────────────────────┘
+
+    T = Dual-Axis Tracker Post (2-4 panels per post, ~12ft spacing)
+    Each tracker post: galvanized steel pole, 8-10ft above grade
+    Foundation: concrete pier, 4ft depth (below frost line)
+</pre>
+</div>
+
+<!-- ============ USAGE ANALYSIS ============ -->
+<h2>3. Electrical Usage Analysis</h2>
+
+<h3>3.1 Usage Profile from Bills</h3>
+<p>Based on the Rocky Mountain Power bills and the two-year usage history chart at the service address (1324 E Green Meadows Ct, Erda UT — Residential Schedule 1):</p>
+
+<table>
+  <tr><th>Period</th><th>Months</th><th>Avg Monthly kWh</th><th>Total kWh</th><th>Avg Monthly Cost</th></tr>
+  <tr><td>Peak Summer (Jun–Aug)</td><td>3</td><td>4,800–5,600</td><td>~15,600</td><td>$500–$800</td></tr>
+  <tr><td>Shoulder Summer (May, Sep)</td><td>2</td><td>3,000–3,800</td><td>~6,800</td><td>$300–$400</td></tr>
+  <tr><td>Shoulder (Apr, Oct)</td><td>2</td><td>1,500–2,000</td><td>~3,500</td><td>$150–$200</td></tr>
+  <tr><td>Winter (Nov–Mar)</td><td>5</td><td>1,000–1,200</td><td>~5,500</td><td>$100–$130</td></tr>
+  <tr style="font-weight:700; background: #fef3c7;">
+    <td><strong>Annual Total</strong></td><td><strong>12</strong></td><td><strong>~2,750 avg</strong></td><td><strong>~33,000</strong></td><td><strong>~$3,300–$3,800</strong></td>
+  </tr>
+</table>
+
+<h3>3.2 Rate Structure</h3>
+<p>Rocky Mountain Power Residential Schedule 1 uses a tiered block rate that increases with usage. The June 2021 bill shows the following rate structure applied to 5,579 kWh over a 36-day billing period:</p>
+
+<table>
+  <tr><th>Charge Component</th><th>Rate</th><th>Notes</th></tr>
+  <tr><td>Customer Charge (Single Phase)</td><td>~$8.50/mo</td><td>Fixed monthly fee</td></tr>
+  <tr><td>Summer Block 1 (first ~400 kWh)</td><td>~$0.0850/kWh</td><td>Baseline rate</td></tr>
+  <tr><td>Summer Block 2 (next ~3,600+ kWh)</td><td>~$0.1137/kWh</td><td>This is where the pump usage lives</td></tr>
+  <tr><td>Winter Block rates</td><td>~$0.08–$0.09/kWh</td><td>Lower rates, lower usage</td></tr>
+  <tr><td>Renewable Energy Adjustment</td><td>$0.0117/kWh</td><td>Applied to all usage</td></tr>
+  <tr><td>Energy Balancing Account</td><td>$0.0044/kWh</td><td>Applied to all usage</td></tr>
+  <tr><td>Blended effective rate</td><td><strong>~$0.103/kWh</strong></td><td>$576.34 ÷ 5,579 kWh</td></tr>
+</table>
+
+<div class="highlight-box">
+  <h4>Key Insight: The Pump is the Problem</h4>
+  <p>Your dad's well pump is almost certainly a 3–7.5 HP submersible pulling 15–40+ amps at 240V. Running continuously during summer irrigation, that's 3,600–9,000+ kWh/month from the pump alone. The tiered rate structure means all that pump usage hits the expensive Block 2 rate at $0.1137/kWh. Every kWh we offset with solar avoids this top-tier rate — making the ROI better than the blended average suggests.</p>
+</div>
+
+<h3>3.3 Net Metering / Export Situation</h3>
+
+<div class="alert-box">
+  <h4>Rocky Mountain Power Net Metering — Important Context</h4>
+  <p>The traditional net metering program (Schedule 135) is <strong>closed to new customers</strong>. New solar installations fall under <strong>Schedule 137 (Net Billing)</strong>, which pays an export credit rate of only <strong>~$0.056/kWh in summer and ~$0.047/kWh in winter</strong> — roughly half the retail rate. This means <strong>self-consumption and battery storage are far more valuable than exporting to the grid.</strong> Every kWh you store and use yourself is worth $0.10–$0.11 avoided cost, vs. $0.05 if exported. This dramatically favors a battery-backed system design.</p>
+</div>
+
+<!-- ============ SYSTEM DESIGN TIERS ============ -->
+<h2>4. System Design — Three Tiers</h2>
+
+<p>All three tiers use the same high-quality component families, just at different scales. Each tier is designed to be expandable — you can start with Tier 1 and add capacity later.</p>
+
+<!-- ====== TIER 1 ====== -->
+<div class="tier-card tier1">
+  <span class="tier-label">Tier 1 — Sensible Offset</span>
+  <h3>50% Annual Offset (~16,500 kWh/yr production)</h3>
+  <p>Covers the baseload and puts a serious dent in summer bills. Modest battery for peak shaving and evening self-consumption. Grid remains primary backup.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="number">10 kW</div>
+      <div class="label">Array Size (DC)</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">18</div>
+      <div class="label">Panels (550W each)</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">9–10</div>
+      <div class="label">Tracker Posts</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">30 kWh</div>
+      <div class="label">Battery Storage</div>
+    </div>
+  </div>
+
+  <h4>Production Estimate</h4>
+  <table>
+    <tr><th>Season</th><th>Daily Production</th><th>Monthly Production</th><th>Grid Offset</th></tr>
+    <tr><td>Summer (Jun–Aug)</td><td>65–75 kWh</td><td>1,950–2,250 kWh</td><td>~40–45%</td></tr>
+    <tr><td>Shoulder (Apr–May, Sep–Oct)</td><td>50–60 kWh</td><td>1,500–1,800 kWh</td><td>~70–90%</td></tr>
+    <tr><td>Winter (Nov–Mar)</td><td>30–40 kWh</td><td>900–1,200 kWh</td><td>~80–100%</td></tr>
+    <tr style="font-weight:700;"><td>Annual Total</td><td></td><td>~16,500 kWh/yr</td><td>~50%</td></tr>
+  </table>
+
+  <h4>Financial Impact</h4>
+  <table>
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>Annual electricity savings</td><td>~$1,700–$1,900</td></tr>
+    <tr><td>Summer monthly bill reduction</td><td>$200–$350/mo</td></tr>
+    <tr><td>Estimated system cost (direct sourced)</td><td>$12,000–$16,000</td></tr>
+    <tr><td>Federal ITC (residential)</td><td><span style="color:#dc2626;">$0 — repealed by OBBBA (Dec 31, 2025)</span></td></tr>
+    <tr><td>Net cost (owner-occupied residential)</td><td>$12,000–$16,000</td></tr>
+    <tr style="font-weight:700;"><td>Simple payback</td><td>8–9 years</td></tr>
+  </table>
+</div>
+
+<!-- ====== TIER 2 ====== -->
+<div class="tier-card tier2">
+  <span class="tier-label">Tier 2 — Summer Slayer</span>
+  <h3>Full Summer Offset + ~75% Annual (~25,000 kWh/yr production)</h3>
+  <p>Sized to eliminate summer pump bills entirely and cover the lion's share of annual usage. The Japower 80 kWh All-in-One ESS ensures self-consumption of most solar production rather than exporting at the low net-billing rate.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="number">18 kW</div>
+      <div class="label">Array Size (DC)</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">32</div>
+      <div class="label">Panels (550W each)</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">16–18</div>
+      <div class="label">Tracker Posts</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">80 kWh</div>
+      <div class="label">Battery (1× Japower ESS)</div>
+    </div>
+  </div>
+
+  <h4>Production Estimate</h4>
+  <table>
+    <tr><th>Season</th><th>Daily Production</th><th>Monthly Production</th><th>Grid Offset</th></tr>
+    <tr><td>Summer (Jun–Aug)</td><td>115–135 kWh</td><td>3,500–4,000 kWh</td><td>~75–85%</td></tr>
+    <tr><td>Shoulder (Apr–May, Sep–Oct)</td><td>90–105 kWh</td><td>2,700–3,150 kWh</td><td>~100%+ (export surplus)</td></tr>
+    <tr><td>Winter (Nov–Mar)</td><td>55–70 kWh</td><td>1,650–2,100 kWh</td><td>~100%+</td></tr>
+    <tr style="font-weight:700;"><td>Annual Total</td><td></td><td>~25,000 kWh/yr</td><td>~75%</td></tr>
+  </table>
+
+  <h4>Financial Impact</h4>
+  <table>
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>Annual electricity savings</td><td>~$2,600–$3,000</td></tr>
+    <tr><td>Summer monthly bill reduction</td><td>$400–$650/mo</td></tr>
+    <tr><td>Estimated system cost (direct sourced)</td><td>$22,000–$28,000</td></tr>
+    <tr><td>Federal ITC (residential)</td><td><span style="color:#dc2626;">$0 — repealed by OBBBA (Dec 31, 2025)</span></td></tr>
+    <tr><td>Net cost (owner-occupied residential)</td><td>$22,000–$28,000</td></tr>
+    <tr style="font-weight:700;"><td>Simple payback</td><td>9–11 years (no shed needed)</td></tr>
+  </table>
+</div>
+
+<!-- ====== TIER 3 ====== -->
+<div class="tier-card tier3">
+  <span class="tier-label">Tier 3 — Off-Grid + Diesel (Rev 3)</span>
+  <h3>Fully Off-Grid with Diesel Backup — 120%+ of Annual Usage (~40,000 kWh/yr production)</h3>
+  <p>Sized for complete energy independence. Solar covers 120%+ of annual usage; the battery bank handles day-to-day cycling and multi-day cloudy stretches; Roger's existing diesel generator auto-starts on low battery SOC to cover week-long winter storms. The Rocky Mountain Power connection is dropped or left dormant behind a manual transfer switch — no interconnection agreement, no export credit, no utility paperwork. This rev 3 architecture uses <strong>2× Sunwave SEI-18K-USP hybrid inverters (36 kW total) + 10× SW-LCT-16 LFP batteries (160.8 kWh)</strong> as the leading ESS candidate, with Japower all-in-one units as a backup option if off-grid verification fails.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="number">30 kW</div>
+      <div class="label">Array Size (DC)</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">54</div>
+      <div class="label">Panels (550W each)</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">27–30</div>
+      <div class="label">Tracker Posts</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">160.8 kWh</div>
+      <div class="label">Battery (10× Sunwave LFP)</div>
+    </div>
+  </div>
+
+  <h4>Off-Grid + Diesel Architecture</h4>
+  <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 15px 0; font-family: monospace; font-size: 0.85em; white-space: pre; overflow-x: auto;">
+ Solar array (DC) ────────┐
+                          │
+ Battery bank (DC) ───────┼──► 2× Sunwave SEI-18K-USP ──► Critical load panel (house + pump)
+                          │       (hybrid inverters,
+ Diesel genny (AC in) ────┘        paralleled, grid-forming)
+                                       │
+                                       └─ optional: RMP meter behind manual transfer switch
+                                          (dormant, "break glass" backup only)
+
+ Control logic:
+ 1. Solar charges batteries + runs loads directly (normal daylight operation)
+ 2. Batteries carry the house overnight + through cloudy days
+ 3. Inverter auto-starts diesel when SOC drops below threshold (e.g., 25%)
+ 4. Diesel charges batteries back to high SOC (e.g., 90%), then shuts off
+ 5. Grid: not required; dropped or kept behind manual transfer switch</div>
+
+  <h4>Production Estimate</h4>
+  <table>
+    <tr><th>Season</th><th>Daily Production</th><th>Monthly Production</th><th>Grid Offset</th></tr>
+    <tr><td>Summer (Jun–Aug)</td><td>190–220 kWh</td><td>5,700–6,600 kWh</td><td>100%+ (export surplus)</td></tr>
+    <tr><td>Shoulder (Apr–May, Sep–Oct)</td><td>150–175 kWh</td><td>4,500–5,250 kWh</td><td>100%+ (large surplus)</td></tr>
+    <tr><td>Winter (Nov–Mar)</td><td>90–115 kWh</td><td>2,700–3,450 kWh</td><td>100%+</td></tr>
+    <tr style="font-weight:700;"><td>Annual Total</td><td></td><td>~40,000+ kWh/yr</td><td>~120%</td></tr>
+  </table>
+
+  <h4>Off-Grid Autonomy (with diesel backup)</h4>
+  <table>
+    <tr><th>Scenario</th><th>Battery Autonomy (alone)</th><th>With Diesel Backup</th></tr>
+    <tr><td>Summer (pump running, no solar day)</td><td>~1 day</td><td>Indefinite — genny tops off overnight</td></tr>
+    <tr><td>Winter (house only, no solar)</td><td>~4–5 days</td><td>Indefinite — genny covers multi-week storms</td></tr>
+    <tr><td>Winter (house + partial solar)</td><td>Indefinite</td><td>Diesel rarely needed</td></tr>
+    <tr><td>Critical-loads-only emergency</td><td>8–11 days</td><td>Weeks to months depending on fuel</td></tr>
+  </table>
+  <p style="font-size: 0.9em; color: #64748b;"><em>Inverter power (36 kW from 2× 18kW paralleled) is sufficient for whole-house loads and well-pump startup surge on a single-phase 240V pump up to ~5 HP. If pump is larger or 3-phase, escalate to Japower Opt 3 × 2 (60 kW).</em></p>
+
+  <h4>Financial Impact</h4>
+  <table>
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>Annual electricity savings</td><td>~$3,500/yr (eliminates RMP bill entirely, off-grid)</td></tr>
+    <tr><td>Export credit income</td><td>$0 (off-grid, not pursued)</td></tr>
+    <tr><td>Diesel fuel cost for winter backup</td><td>~$200–$400/yr (est. 50–100 gal/yr in winter only)</td></tr>
+    <tr><td>Estimated system cost (Sunwave path, landed)</td><td>$48,000–$52,000</td></tr>
+    <tr><td>Estimated system cost (Japower Opt 1 backup path, landed)</td><td>$56,000–$62,000</td></tr>
+    <tr><td>Federal ITC (residential)</td><td><span style="color:#dc2626;">$0 — repealed by OBBBA (Dec 31, 2025)</span></td></tr>
+    <tr><td>Net cost (owner-occupied residential)</td><td>$48,000–$62,000 depending on ESS path</td></tr>
+    <tr style="font-weight:700;"><td>Simple payback (Sunwave path)</td><td>~14 years</td></tr>
+    <tr><td>25-year value (avoided electric)</td><td>$95,000–$125,000+</td></tr>
+  </table>
+
+  <div class="success-box">
+    <h4>Why Off-Grid + Diesel Beats Grid-Tied Here</h4>
+    <p>Three factors converge to make Mode A the right call for Roger: (1) RMP Schedule 137 net billing pays only ~$0.04/kWh for exports vs. ~$0.12/kWh retail for imports, so the export credit never justifies the cert and paperwork burden; (2) Roger already owns a diesel generator that solves the multi-day cloudy-winter problem the grid connection would otherwise solve; and (3) off-grid operation unlocks Sunwave (CSA-listed) as a viable inverter — saving roughly $9,000 landed versus Japower all-in-one and ~$28,000 versus the Japower 60 kW option. The diesel burns a trickle of fuel a few times per winter and provides deeper resilience than any grid connection ever could.</p>
+  </div>
+</div>
+
+<!-- ============ COMPONENT SPECIFICATIONS ============ -->
+<h2 class="page-break">5. Component Specifications — Bill of Materials</h2>
+
+<h3>5.1 Solar Panels</h3>
+<div class="component-grid">
+  <div class="component-item">
+    <h4>Primary Recommendation: LONGi Hi-MO 7 (or Hi-MO 9)</h4>
+    <div class="spec">
+      <p><strong>Power:</strong> 550W–580W per panel (Hi-MO 7) / up to 660W (Hi-MO 9)</p>
+      <p><strong>Cell Type:</strong> HPBC 2.0 / N-type TOPCon</p>
+      <p><strong>Efficiency:</strong> 22.5–24.4%</p>
+      <p><strong>Dimensions:</strong> ~2278 × 1134 × 30mm (~7.5 ft × 3.7 ft)</p>
+      <p><strong>Weight:</strong> ~28–32 kg per panel</p>
+      <p><strong>Warranty:</strong> 25-year product, 30-year performance</p>
+      <p><strong>Bifacial:</strong> Yes — 5–15% rear-side gain on trackers</p>
+      <p><strong>Temp Coefficient:</strong> –0.29%/°C (excellent for Utah summers)</p>
+    </div>
+  </div>
+  <div class="component-item">
+    <h4>Alternative: JA Solar DeepBlue 4.0 Pro</h4>
+    <div class="spec">
+      <p><strong>Power:</strong> 550W–580W per panel</p>
+      <p><strong>Cell Type:</strong> N-type TOPCon</p>
+      <p><strong>Efficiency:</strong> 22.1–22.6%</p>
+      <p><strong>Bifacial:</strong> Yes — excellent for tracker mount</p>
+      <p><strong>Warranty:</strong> 25-year product, 30-year linear performance</p>
+      <p><strong>Note:</strong> Slightly lower cost than LONGi, still Bloomberg Tier-1</p>
+    </div>
+  </div>
+</div>
+
+<div class="info-box">
+  <h4>China Direct Sourcing — Panel Pricing</h4>
+  <p>With your 25 years of China business relationships, you should be able to source Tier-1 panels at <strong>$0.08–$0.12/watt FOB China</strong> (vs. $0.25–$0.40/watt US retail). For 54 panels at 550W = 29.7 kW, that's roughly <strong>$2,400–$3,600 for the panels alone</strong>. Even with shipping ($0.02–$0.04/watt to US West Coast, plus trucking to Utah), you're looking at panels delivered for under $0.15/watt — less than half US distributor pricing. Request quotes from LONGi, JA Solar, Trina, and JinkoSolar directly — they all have export departments accustomed to container-load orders.</p>
+</div>
+
+<h3>5.2 Dual-Axis Solar Trackers</h3>
+<div class="component-grid">
+  <div class="component-item">
+    <h4>Tracker Type: Post-Mounted Dual-Axis</h4>
+    <div class="spec">
+      <p><strong>Configuration:</strong> Single steel pole, concrete pier foundation</p>
+      <p><strong>Panels per post:</strong> 2 panels (portrait orientation) per tracker head</p>
+      <p><strong>Tracking range:</strong> ±60° east-west (azimuth), 0–65° tilt (elevation)</p>
+      <p><strong>Drive system:</strong> Dual linear actuators, slew drive</p>
+      <p><strong>Controller:</strong> GPS/astronomical algorithm + light sensor hybrid</p>
+      <p><strong>Wind rating:</strong> Operational to 40 mph, stow at 50+ mph (auto-horizontal)</p>
+      <p><strong>Post height:</strong> 8–10 ft to center of array (clears snow, allows mowing)</p>
+      <p><strong>Foundation:</strong> 12"–16" diameter, 4 ft deep concrete pier (below frost line)</p>
+      <p><strong>Spacing:</strong> 12–14 ft center-to-center along fenceline</p>
+      <p><strong>Power consumption:</strong> ~5–10W per tracker (negligible)</p>
+    </div>
+  </div>
+  <div class="component-item">
+    <h4>Recommended Sources (China Direct)</h4>
+    <div class="spec">
+      <p><strong>Manufacturer options:</strong></p>
+      <p>• Xiamen Kesheng Solar (established, exports to 100+ countries)</p>
+      <p>• Jiangsu PromiSteel (dual-axis specialist, TUV certified)</p>
+      <p>• Hangzhou NCNF Solar (solar tracking ground mount kits)</p>
+      <p><strong>Estimated cost per tracker unit:</strong> $350–$600 FOB China</p>
+      <p><strong>Includes:</strong> Pole mount, dual actuators, slew drive, controller, mounting frame for 2 panels</p>
+      <p><strong>Shipping:</strong> Container load (20+ units) — $2,000–$3,000 for full container to SLC</p>
+      <p><strong>Certifications to require:</strong> CE, TUV, IEC 62817, UL 3703 (if applicable)</p>
+      <p><strong>Warranty:</strong> Negotiate 10-year structural, 5-year electronics</p>
+    </div>
+  </div>
+</div>
+
+<h3>5.3 Inverter + Battery: Japower All-in-One ESS (Recommended)</h3>
+
+<div class="success-box">
+  <h4>Game Changer: All-in-One Energy Storage System</h4>
+  <p>The <strong>Japower All-in-One ESS</strong> from Guangdong Japower Energy Technology Co. dramatically simplifies the entire power center. Instead of sourcing a separate hybrid inverter, separate battery modules, a battery management system, an automatic transfer switch, and building a dedicated climate-controlled battery shed — <strong>everything comes in a single weatherproof cabinet</strong>. Inverter, LiFePO₄ battery, BMS, cooling system, and transfer switching are all factory-integrated. Plug in the solar DC input, plug in the AC grid connection, done.</p>
+</div>
+
+<div class="component-grid">
+  <div class="component-item">
+    <h4>Japower All-in-One ESS — US Spec</h4>
+    <div class="spec">
+      <p><strong>AC Output:</strong> 120V/240V Split-Phase 60Hz (US residential standard)</p>
+      <p><strong>Battery Chemistry:</strong> LiFePO₄ (Lithium Iron Phosphate)</p>
+      <p><strong>Battery Capacity:</strong> 80 kWh per unit (stackable/paralleled)</p>
+      <p><strong>Inverter Output:</strong> Up to 30 kW per unit</p>
+      <p><strong>Cycle Life:</strong> 6,000+ cycles at 80% DoD (~16 years daily cycling)</p>
+      <p><strong>Usable Capacity:</strong> ~76 kWh per unit (95% DoD)</p>
+      <p><strong>Cooling:</strong> Built-in active cooling system (no external HVAC needed)</p>
+      <p><strong>BMS:</strong> Integrated multi-level battery management with cell balancing</p>
+      <p><strong>Transfer Time:</strong> &lt;10ms (seamless for pump and house loads)</p>
+      <p><strong>Grid Interaction:</strong> Export limiting, time-of-use, zero-export, self-consumption priority</p>
+      <p><strong>Monitoring:</strong> WiFi + app-based monitoring</p>
+      <p><strong>Enclosure:</strong> IP65 rated outdoor cabinet — no shed required</p>
+      <p><strong>Communication:</strong> CAN bus / RS485 for solar input coordination</p>
+      <p><strong>Certifications:</strong> Confirm UL 1741, IEEE 1547, FCC with supplier (US-spec model)</p>
+    </div>
+  </div>
+  <div class="component-item">
+    <h4>Tier Scaling with Japower Units</h4>
+    <div class="spec">
+      <p style="margin-top: 5px;"><strong>Tier 1 (30 kWh / 10 kW):</strong></p>
+      <p>1 × Japower 30 kWh / 10 kW unit — ~$5,000–$7,000</p>
+      <p><em>Covers baseload + evening self-consumption</em></p>
+      <p style="margin-top: 15px;"><strong>Tier 2 (80 kWh / 30 kW):</strong></p>
+      <p>1 × Japower 80 kWh / 30 kW unit — ~$9,000–$14,000</p>
+      <p><em>Full summer offset, serious backup capacity</em></p>
+      <p style="margin-top: 15px;"><strong>Tier 3 (160 kWh / 60 kW):</strong></p>
+      <p>2 × Japower 80 kWh / 30 kW units (paralleled) — ~$18,000–$28,000</p>
+      <p><em>Full off-grid capable, massive autonomy, 60 kW surge for pump startup</em></p>
+      <p style="margin-top: 15px;"><strong>Supplier:</strong> Guangdong Japower Energy Technology Co.</p>
+      <p><strong>Platform:</strong> Alibaba (search "Japower all in one ESS") — request direct quote for US-spec model with 120V/240V 60Hz output</p>
+      <p><strong>Key ask:</strong> Specify US split-phase 120V/240V 60Hz. Pricing doesn't update dynamically on their listing — send a direct inquiry with exact capacity and energy specs for real pricing.</p>
+    </div>
+  </div>
+</div>
+
+<div class="highlight-box">
+  <h4>Why All-in-One is the Move</h4>
+  <p>The Japower All-in-One ESS replaces <strong>five separate components</strong> with one factory-tested cabinet:</p>
+  <p>1. <strong>Hybrid inverter</strong> (was Deye 30K — $3,200) → Built in</p>
+  <p>2. <strong>Battery bank</strong> (was 200 kWh LiFePO₄ modules — $20,000) → Built in</p>
+  <p>3. <strong>Battery Management System</strong> (was separate BMS per module) → Built in</p>
+  <p>4. <strong>Automatic Transfer Switch</strong> (was 200A ATS — $1,200) → Built in</p>
+  <p>5. <strong>Climate-controlled battery shed</strong> (was $8,000 for 8×12 structure) → Not needed (IP65 outdoor cabinet with integrated cooling)</p>
+  <p style="margin-top: 10px;">That's roughly <strong>$32,400 in separate components replaced by $18,000–$28,000</strong> for two all-in-one units — simpler installation, factory QA, single warranty, and no shed construction. Less to go wrong, less to wire, less to maintain.</p>
+</div>
+
+<h3>5.4 Battery Chemistry — LiFePO₄ (LFP)</h3>
+
+<div class="info-box">
+  <h4>About the LiFePO₄ Inside the Japower Units</h4>
+  <p>The Japower All-in-One ESS uses <strong>LiFePO₄ (Lithium Iron Phosphate)</strong> cells — the safest lithium battery chemistry available. No thermal runaway risk, no cobalt, and a cycle life of 6,000+ cycles at 80% depth of discharge. That translates to <strong>16+ years of daily cycling</strong> before reaching 80% original capacity. Round-trip efficiency is 95–97%, meaning virtually no energy is lost in the charge/discharge cycle. The integrated BMS handles cell balancing, over/under voltage protection, temperature monitoring, and short circuit protection — all factory-calibrated and tested before shipping.</p>
+</div>
+
+<h3>5.5 Balance of System (BOS) Components</h3>
+
+<table>
+  <tr><th>Component</th><th>Description</th><th>Tier 1</th><th>Tier 2</th><th>Tier 3</th></tr>
+  <tr>
+    <td><strong>DC Combiner Boxes</strong></td>
+    <td>Combine tracker string outputs, fused disconnects, surge protection</td>
+    <td>2 boxes</td><td>3 boxes</td><td>4–5 boxes</td>
+  </tr>
+  <tr>
+    <td><strong>DC Wiring (PV)</strong></td>
+    <td>10 AWG PV wire (USE-2/PV rated), UV resistant, in-conduit along fenceline run</td>
+    <td>~800 ft</td><td>~1,400 ft</td><td>~2,200 ft</td>
+  </tr>
+  <tr>
+    <td><strong>AC Wiring</strong></td>
+    <td>From inverter to main panel: 4 AWG copper (Tier 1/2), 2 AWG (Tier 3)</td>
+    <td>~100 ft</td><td>~100 ft</td><td>~150 ft</td>
+  </tr>
+  <tr>
+    <td><strong>Conduit (underground)</strong></td>
+    <td>2" Schedule 40 PVC, trenched 24" deep from array to power center</td>
+    <td>~200 ft</td><td>~300 ft</td><td>~450 ft</td>
+  </tr>
+  <tr>
+    <td><strong>Rapid Shutdown</strong></td>
+    <td>Module-level rapid shutdown (NEC 2020 690.12) — Tigo or APSystems</td>
+    <td>18 units</td><td>32 units</td><td>54 units</td>
+  </tr>
+  <tr>
+    <td><strong>Grounding</strong></td>
+    <td>Equipment grounding conductors, ground rods at each array section, GFDI</td>
+    <td colspan="3">Per NEC Article 690 — all tiers</td>
+  </tr>
+  <tr>
+    <td><strong>AC Disconnect</strong></td>
+    <td>Visible, lockable disconnect at utility meter per Rocky Mountain Power requirements</td>
+    <td colspan="3">Required for all tiers — ~$200–$400</td>
+  </tr>
+  <tr>
+    <td><strong>Automatic Transfer Switch</strong></td>
+    <td>Built into Japower All-in-One ESS — no separate unit needed</td>
+    <td>Built in</td><td>Built in</td><td>Built in</td>
+  </tr>
+  <tr>
+    <td><strong>Monitoring System</strong></td>
+    <td>Japower app + optional cellular backup modem</td>
+    <td colspan="3">Included with ESS unit — add $200 for cellular backup</td>
+  </tr>
+  <tr>
+    <td><strong>Surge Protection</strong></td>
+    <td>Type 1+2 SPD on DC side, Type 2 SPD on AC side</td>
+    <td colspan="3">~$300–$500 per tier</td>
+  </tr>
+</table>
+
+<h3>5.6 Power Center Siting (No Shed Required)</h3>
+<p>With the Japower All-in-One ESS, the dedicated battery shed is <strong>eliminated</strong>. The units are IP65-rated outdoor cabinets with integrated active cooling — they sit on a concrete pad near the main electrical panel, similar to an AC condenser unit. Requirements are minimal:</p>
+
+<table>
+  <tr><th>Requirement</th><th>Tier 1 (1 small unit)</th><th>Tier 2 (1 unit)</th><th>Tier 3 (2 units)</th></tr>
+  <tr><td>Footprint</td><td>~3' × 2' pad</td><td>~4' × 3' pad</td><td>~8' × 3' pad (side by side)</td></tr>
+  <tr><td>Foundation</td><td>Existing concrete or 4" pad</td><td>4" concrete pad</td><td>4" concrete pad, level</td></tr>
+  <tr><td>Ventilation</td><td colspan="3">Built-in active cooling — no external HVAC or ventilation needed</td></tr>
+  <tr><td>Weather protection</td><td colspan="3">IP65 rated enclosure — rain, dust, snow rated. Optional shade awning for Utah sun.</td></tr>
+  <tr><td>Clearance</td><td colspan="3">12" on all sides for airflow, 36" front clearance for service access per NEC</td></tr>
+  <tr><td>Electrical sub-panel</td><td>100A</td><td>200A</td><td>200A</td></tr>
+  <tr><td>Est. site prep cost</td><td>$0 (existing pad)</td><td>$300–$500</td><td>$500–$800</td></tr>
+</table>
+
+<div class="success-box">
+  <h4>Shed Savings: $4,000–$10,000 Eliminated</h4>
+  <p>The single biggest simplification of the all-in-one approach: no battery shed construction. No framing, no insulation, no HVAC, no fire-rated drywall, no reinforced slab. Just a flat concrete pad near the house panel and two weatherproof cabinets. This saves $4,000–$10,000 depending on tier and eliminates weeks of construction time.</p>
+</div>
+
+
+<!-- ============ COMPLETE BOM + COSTS ============ -->
+<h2 class="page-break">6. Complete Cost Breakdown</h2>
+
+<p>All component costs assume <strong>China-direct sourcing</strong> with your existing business relationships. Shipping estimates assume a consolidated 20 ft or 40 ft container to Salt Lake City area. Local labor (concrete, electrical, trenching) uses Tooele County rates.</p>
+
+<h3>Tier 1 — 50% Offset ($10,000–$14,000)</h3>
+<div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin: 15px 0;">
+  <div class="cost-row"><span class="item">18 × LONGi Hi-MO 7 550W panels ($0.10/W avg delivered)</span><span class="price">$990</span></div>
+  <div class="cost-row"><span class="item">10 × Dual-axis tracker posts w/ actuators ($500 ea delivered)</span><span class="price">$5,000</span></div>
+  <div class="cost-row"><span class="item">1 × Japower All-in-One ESS (30 kWh / 10 kW)</span><span class="price">$6,000</span></div>
+  <div class="cost-row"><span class="item">BOS (wiring, conduit, combiner, disconnects, grounding)</span><span class="price">$1,800</span></div>
+  <div class="cost-row"><span class="item">Concrete piers (10 posts × $150 ea)</span><span class="price">$1,500</span></div>
+  <div class="cost-row"><span class="item">Shipping (partial container + trucking)</span><span class="price">$1,500</span></div>
+  <div class="cost-row"><span class="item">Electrical permit + interconnection fee</span><span class="price">$500</span></div>
+  <div class="cost-row"><span class="item"><strong>TOTAL SYSTEM COST</strong></span><span class="price"><strong>$17,290</strong></span></div>
+  <div class="cost-row"><span class="item">Federal ITC (residential, Sec. 25D)</span><span class="price" style="color: #dc2626;">$0 (repealed)</span></div>
+  <div class="cost-row"><span class="item"><strong>NET COST (residential owner)</strong></span><span class="price"><strong>$17,290</strong></span></div>
+</div>
+
+<h3>Tier 2 — Summer Slayer ($18,000–$24,000)</h3>
+<div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin: 15px 0;">
+  <div class="cost-row"><span class="item">32 × LONGi Hi-MO 7 550W panels ($0.10/W avg delivered)</span><span class="price">$1,760</span></div>
+  <div class="cost-row"><span class="item">18 × Dual-axis tracker posts w/ actuators ($500 ea delivered)</span><span class="price">$9,000</span></div>
+  <div class="cost-row"><span class="item">1 × Japower All-in-One ESS (80 kWh / 30 kW)</span><span class="price">$11,500</span></div>
+  <div class="cost-row"><span class="item">BOS (wiring, conduit, combiners, disconnects, grounding, RSD)</span><span class="price">$2,800</span></div>
+  <div class="cost-row"><span class="item">Concrete piers (18 posts × $150 ea)</span><span class="price">$2,700</span></div>
+  <div class="cost-row"><span class="item">ESS concrete pad</span><span class="price">$400</span></div>
+  <div class="cost-row"><span class="item">Shipping (full 20 ft container + trucking)</span><span class="price">$2,500</span></div>
+  <div class="cost-row"><span class="item">Electrical permit + interconnection fee</span><span class="price">$500</span></div>
+  <div class="cost-row"><span class="item"><strong>TOTAL SYSTEM COST</strong></span><span class="price"><strong>$31,160</strong></span></div>
+  <div class="cost-row"><span class="item">Federal ITC (residential, Sec. 25D)</span><span class="price" style="color: #dc2626;">$0 (repealed)</span></div>
+  <div class="cost-row"><span class="item"><strong>NET COST (residential owner)</strong></span><span class="price"><strong>$31,160</strong></span></div>
+</div>
+
+<h3>Tier 3 — Off-Grid + Diesel, Sunwave ESS Path (Rev 3)</h3>
+<div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin: 15px 0;">
+  <div class="cost-row"><span class="item">54 × LONGi Hi-MO 7 550W panels ($0.10/W avg delivered)</span><span class="price">$2,970</span></div>
+  <div class="cost-row"><span class="item">30 × Dual-axis tracker posts w/ actuators ($500 ea delivered)</span><span class="price">$15,000</span></div>
+  <div class="cost-row"><span class="item">2 × Sunwave SEI-18K-USP split-phase hybrid inverters @ $3,042</span><span class="price">$6,084</span></div>
+  <div class="cost-row"><span class="item">10 × Sunwave SW-LCT-16 LFP batteries (16.08 kWh @ $1,308)</span><span class="price">$13,080</span></div>
+  <div class="cost-row"><span class="item">Tariff allowance (~35% blended on ESS + panels + trackers FOB)</span><span class="price">$13,000</span></div>
+  <div class="cost-row"><span class="item">BOS (wiring, conduit, combiners, disconnects, grounding, RSD)</span><span class="price">$4,500</span></div>
+  <div class="cost-row"><span class="item">Diesel genny AC input wiring + 2-wire auto-start retrofit (if needed)</span><span class="price">$800</span></div>
+  <div class="cost-row"><span class="item">Manual transfer switch for dormant RMP connection (optional)</span><span class="price">$600</span></div>
+  <div class="cost-row"><span class="item">Concrete piers (30 posts × $150 ea)</span><span class="price">$4,500</span></div>
+  <div class="cost-row"><span class="item">ESS equipment pad (8' × 4' for inverter + battery rack)</span><span class="price">$700</span></div>
+  <div class="cost-row"><span class="item">Shipping (full 40 ft container + trucking)</span><span class="price">$3,500</span></div>
+  <div class="cost-row"><span class="item">Tooele County electrical permit (no RMP interconnection fee)</span><span class="price">$400</span></div>
+  <div class="cost-row"><span class="item">Trenching (~450 ft × $5/ft)</span><span class="price">$2,250</span></div>
+  <div class="cost-row"><span class="item"><strong>TOTAL SYSTEM COST (landed, Sunwave path)</strong></span><span class="price"><strong>~$67,384</strong></span></div>
+  <div class="cost-row"><span class="item">Federal ITC (residential, Sec. 25D)</span><span class="price" style="color: #dc2626;">$0 (repealed)</span></div>
+  <div class="cost-row"><span class="item"><strong>NET COST (residential owner, Sunwave path)</strong></span><span class="price"><strong>~$67,384</strong></span></div>
+</div>
+
+<div class="info-box">
+  <h4>Backup ESS Path — Japower Opt 1 × 2 (All-in-One)</h4>
+  <p>If Sunwave fails off-grid verification (pure off-grid mode, genny AC input, paralleling), fall back to <strong>2× Japower Opt 1 outdoor cabinets</strong> at ~$26,000 FOB / ~$35,100 landed. This replaces the $6,084 + $13,080 Sunwave lines above with ~$26,000 FOB, adding approximately <strong>$6,836 FOB delta (~$9,230 landed delta)</strong>. Total Tier 3 landed cost in that scenario: <strong>~$76,600</strong>. Still off-grid, still no UL 1741 SA required, just a more expensive but more turnkey all-in-one cabinet.</p>
+</div>
+
+<div class="highlight-box">
+  <h4>Japower Pricing Note</h4>
+  <p>The Japower unit costs above are estimates based on typical all-in-one ESS pricing from Chinese manufacturers ($110–$150/kWh for the integrated unit). <strong>Their Alibaba listing does not update pricing dynamically</strong> as you change size/energy options. You'll need to send a direct inquiry specifying: 80 kWh capacity, 30 kW inverter, US-spec AC 120V/240V 60Hz output, quantity 2 units. Expect a quote within 24–48 hours. Negotiate — your order of 2 units plus a full container of panels and trackers gives you leverage.</p>
+</div>
+
+<!-- ============ ROI COMPARISON ============ -->
+<h2>7. Return on Investment Comparison</h2>
+
+<table>
+  <tr><th>Metric</th><th>Tier 1</th><th>Tier 2</th><th>Tier 3 (Sunwave)</th><th>Tier 3 (Japower backup)</th></tr>
+  <tr><td>Architecture</td><td>Grid-tied</td><td>Grid-tied</td><td><strong>Off-grid + diesel</strong></td><td><strong>Off-grid + diesel</strong></td></tr>
+  <tr><td>Net system cost (residential, no ITC)</td><td>$17,290</td><td>$31,160</td><td>~$67,400</td><td>~$76,600</td></tr>
+  <tr><td>Year 1 savings (avoided RMP bill)</td><td>$1,750</td><td>$2,800</td><td>$3,500</td><td>$3,500</td></tr>
+  <tr><td>Simple payback (years)</td><td>9.9</td><td>11.1</td><td>~19</td><td>~22</td></tr>
+  <tr><td>Payback with 4% rate escalation</td><td>8.2</td><td>9.0</td><td>~14</td><td>~16</td></tr>
+  <tr><td>25-year net savings (after system cost)</td><td>$25,000+</td><td>$55,000+</td><td>$60,000+</td><td>$50,000+</td></tr>
+  <tr><td>25-year ROI</td><td>~145%</td><td>~175%</td><td>~90%</td><td>~65%</td></tr>
+  <tr><td>Energy independence</td><td>Partial</td><td>High (summer)</td><td>Complete</td></tr>
+  <tr><td>Resale value added to property</td><td>$8,000–$12,000</td><td>$15,000–$22,000</td><td>$30,000–$45,000</td></tr>
+</table>
+
+<div class="highlight-box">
+  <h4>The Real Math on Rate Escalation</h4>
+  <p>Rocky Mountain Power residential rates have increased an average of 3.5–5% per year over the last decade. At 4% annual escalation, your dad's current ~$3,500/year electric bill becomes ~$5,800/year in 10 years and ~$9,600/year in 25 years. Over 25 years, the cumulative electric spend without solar is approximately <strong>$145,000</strong>. Even the Tier 3 "zombie" system pays for itself many times over against that backdrop.</p>
+</div>
+
+<!-- ============ INSTALLATION ============ -->
+<h2>8. Installation Approach</h2>
+
+<h3>8.1 Recommended DIY + Licensed Electrician Approach</h3>
+<p>Given your family's hands-on capability, significant cost can be saved by self-performing the mechanical work and hiring a licensed electrician only for the grid interconnection, panel hookup, and inspection-required work.</p>
+
+<div class="timeline-item">
+  <h4>Phase 1: Site Prep & Foundations (DIY — 2-3 weekends)</h4>
+  <p>Survey and mark tracker post locations along south and west fenceline. Dig or auger concrete pier holes (12"–16" diameter, 48" deep — below Tooele County frost line). Pour concrete with J-bolts or embedded post brackets. Allow 7 days cure time.</p>
+</div>
+
+<div class="timeline-item">
+  <h4>Phase 2: Trenching & Conduit (DIY or rent trencher — 1-2 days)</h4>
+  <p>Trench from array runs to power center location. Lay 2" Schedule 40 PVC conduit with pull rope. Trench depth: 24" minimum. Pull DC home-run wires after tracker installation.</p>
+</div>
+
+<div class="timeline-item">
+  <h4>Phase 3: Tracker Assembly & Panel Mount (DIY — 2-3 weekends)</h4>
+  <p>Assemble tracker frames on posts. Mount panels. Connect tracker actuators and controllers. Test tracking movement. Wire panels in series strings (typically 2 panels per tracker in series).</p>
+</div>
+
+<div class="timeline-item">
+  <h4>Phase 4: Japower ESS Installation (Licensed Electrician — 1 day)</h4>
+  <p>Place Japower All-in-One ESS unit(s) on concrete pad near main panel. Connect DC combiner boxes to ESS solar input. Wire AC output to main panel. For Tier 3, parallel the two units per manufacturer instructions. No battery rack assembly, no ATS wiring, no battery shed — the all-in-one design cuts this phase from 2 days to 1.</p>
+</div>
+
+<div class="timeline-item">
+  <h4>Phase 5: Inspection & Interconnection (1-2 weeks)</h4>
+  <p>Schedule Tooele County electrical inspection. Submit Rocky Mountain Power interconnection application (Schedule 137). Install utility-required AC disconnect at meter. Receive Permission to Operate (PTO).</p>
+</div>
+
+<div class="timeline-item">
+  <h4>Phase 6: Commissioning & Monitoring (1 day)</h4>
+  <p>Power up system. Configure Japower ESS settings (self-consumption priority, battery charge/discharge limits, export limits). Set up app-based monitoring. Verify tracker alignment and calibration. Test backup/island mode.</p>
+</div>
+
+<h3>8.2 Permits & Interconnection</h3>
+<table>
+  <tr><th>Requirement</th><th>Details</th><th>Est. Cost</th></tr>
+  <tr><td>Tooele County Building Permit</td><td>Electrical permit for solar PV + battery storage</td><td>$200–$400</td></tr>
+  <tr><td>Rocky Mountain Power Interconnection</td><td>Schedule 137 application, engineering review for systems &gt;25 kW</td><td>$0–$300</td></tr>
+  <tr><td>Utility-Required AC Disconnect</td><td>Visible, lockable, accessible to utility at meter</td><td>Included in BOS</td></tr>
+  <tr><td>NEC 2020 Compliance</td><td>Rapid shutdown (690.12), grounding (690.41), labeling</td><td>Included in BOS</td></tr>
+  <tr><td>HOA / Covenants</td><td>Verify Erda/Green Meadows has no solar restrictions (Utah Solar Rights Act protects most installations)</td><td>$0</td></tr>
+</table>
+
+<!-- ============ SOURCING GUIDE ============ -->
+<h2 class="page-break">9. China Sourcing Playbook</h2>
+
+<p>Given your 25 years of direct China business experience, here's the specific sourcing strategy for this project:</p>
+
+<h3>9.1 What to Source from China (Container Load)</h3>
+<table>
+  <tr><th>Component</th><th>Recommended Manufacturer</th><th>Platform / Contact</th><th>Est. Lead Time</th></tr>
+  <tr><td>Solar panels (550W)</td><td>LONGi, JA Solar, Trina, or Jinko</td><td>Direct factory sales department; also on Alibaba/Made-in-China</td><td>2–4 weeks production + 3–4 weeks ocean freight</td></tr>
+  <tr><td>Dual-axis trackers</td><td>Xiamen Kesheng, PromiSteel, NCNF Solar</td><td>Made-in-China.com, direct inquiry</td><td>3–5 weeks production</td></tr>
+  <tr><td>All-in-One ESS (inverter + battery)</td><td>Guangdong Japower Energy Technology Co.</td><td>Alibaba — search "Japower all in one ESS" — send direct inquiry for US-spec 120V/240V 60Hz</td><td>3–6 weeks production</td></tr>
+  <tr><td>DC combiners, surge protectors</td><td>Various — bundle with tracker order</td><td>Same supplier as trackers</td><td>Bundled</td></tr>
+</table>
+
+<h3>9.2 What to Source Locally (US)</h3>
+<table>
+  <tr><th>Component</th><th>Why Local</th><th>Where</th></tr>
+  <tr><td>PV wire (USE-2, 10 AWG)</td><td>Heavy, cheap locally, not worth shipping</td><td>Platt Electric (SLC), Home Depot, SolarEdge distributors</td></tr>
+  <tr><td>Conduit (Schedule 40 PVC)</td><td>Bulky, locally available</td><td>Any electrical supply house</td></tr>
+  <tr><td>Concrete (piers)</td><td>Can't ship concrete from China!</td><td>Local ready-mix or bag mix from Home Depot</td></tr>
+  <tr><td>AC wiring, breakers, panel</td><td>Must be UL-listed, local code</td><td>Platt Electric, Graybar</td></tr>
+  <tr><td>Rapid shutdown devices</td><td>NEC compliance, UL-listed</td><td>Tigo (TS4-A-2F) or APsystems — available from US solar distributors</td></tr>
+  <tr><td>Ground rods, lugs, grounding wire</td><td>Local electrical supply</td><td>Platt Electric</td></tr>
+</table>
+
+<h3>9.3 Shipping Strategy</h3>
+<div class="info-box">
+  <h4>Container Consolidation</h4>
+  <p>For Tier 3, all China-sourced components (54 panels + 30 trackers + batteries + inverter + accessories) fit comfortably in a single <strong>40 ft high-cube container</strong>. Estimated freight: <strong>$3,000–$4,000 FOB Ningbo/Shanghai to SLC rail yard or Tooele</strong>, plus ~$500 trucking/drayage to the property. Total transit: 25–35 days ocean + 3–5 days rail/truck. For Tier 1 or 2, a 20 ft container or LCL (less-than-container-load) consolidation works — add $500–$1,000 to per-unit shipping cost. The sweet spot for shipping economics is Tier 2 or 3 where you fill a container.</p>
+</div>
+
+<!-- ============ IMPORTANT NOTES ============ -->
+<h2>10. Important Considerations</h2>
+
+<div class="alert-box">
+  <h4>US Tariffs on Chinese Solar Equipment (2025–2026)</h4>
+  <p>As of 2025–2026, US tariffs on Chinese solar panels and cells range from <strong>25–50%</strong> depending on product classification (Section 201, Section 301, AD/CVD duties). However, several strategies can mitigate this:</p>
+  <p>1. <strong>Southeast Asian assembly:</strong> Many Tier-1 Chinese manufacturers (LONGi, Trina, JA) have assembly plants in Vietnam, Cambodia, Thailand, and Malaysia. Panels assembled there may face lower or no AD/CVD duties (though this landscape changes — verify current rates at time of order).</p>
+  <p>2. <strong>Trackers and batteries</strong> generally face lower tariff rates than panels/cells (verify HTS codes at time of import).</p>
+  <p>3. <strong>Even with tariffs</strong>, direct-sourced pricing is often still 30–50% below US retail distributor pricing.</p>
+  <p>4. Consult a <strong>customs broker</strong> before placing orders to confirm current duty rates for your specific HTS classifications.</p>
+</div>
+
+<div class="alert-box">
+  <h4>Federal ITC — REPEALED for Residential Owners</h4>
+  <p>The <strong>One Big Beautiful Bill Act (OBBBA)</strong>, signed July 4, 2025, <strong>terminated the 30% residential solar tax credit (Section 25D) on December 31, 2025</strong>. No step-down, no transition period. For a residential system placed in service in 2026, the owner receives <strong>$0 in federal tax credit</strong>. This removes approximately $17,000 of assumed savings from the Tier 3 case.</p>
+  <p><strong>What's still available (not assumed in this document's economics):</strong></p>
+  <p>1. <strong>Section 48E commercial ITC (30%)</strong> is still alive for projects that begin construction by July 4, 2026 and are placed in service by end of 2027. If the property is structured as a farm, ranch, or LLC business operation, the system may qualify under 48E instead of 25D. This is a time-sensitive window — verify with a CPA before April/May to preserve eligibility.</p>
+  <p>2. <strong>Third-party ownership (lease/PPA)</strong> — the lessor can still claim 48E through 2027 and pass some savings through. Generally worse economics for an owner with capital and direct-sourcing leverage.</p>
+  <p><strong>Bottom line:</strong> The economics throughout this document reflect the residential-owner / no-ITC case. If an ag/business structure is viable, restore the 30% credit and subtract it from each tier's net cost.</p>
+</div>
+
+<div class="success-box">
+  <h4>Utah State Incentives</h4>
+  <p>Utah's state renewable energy tax credit has been phased out, but the property tax exemption for renewable energy systems is still in effect — the added value of the solar system is <strong>exempt from property tax assessment</strong> for the first 8 years. This matters on a system worth $45K–$65K. Additionally, check with Tooele County for any local incentives or rebates that may apply.</p>
+</div>
+
+<!-- ============ RECOMMENDATION ============ -->
+<h2>11. Recommendation</h2>
+
+<p>Given the property size, available fenceline, your China sourcing capability, Roger's existing diesel generator, and his prepper sensibility — I'd recommend <strong>going straight to Tier 3 in a fully off-grid Mode A architecture with Sunwave as the ESS path</strong>, pending three verifications (Sunwave off-grid capability, Tooele County permit acceptance of CSA listing, and a CPA call on 48E ag eligibility). Here's why:</p>
+
+<p>Dropping the grid connection is the move that unlocks everything else. RMP's Schedule 137 net billing is structurally unattractive — ~$0.04/kWh export credit is never going to justify the UL 1741 SA inverter constraint. Once you remove that constraint, Sunwave becomes viable, which is the cheapest $/kWh ESS on the table by a wide margin. Roger's existing diesel genny removes the last remaining reason to keep the grid (multi-day winter backup), and the diesel wires into the Sunwave inverter's AC input as a drop-in extension of the control logic. 160 kWh of LFP storage plus unlimited diesel runtime is materially more resilient than any grid-tied system would be.</p>
+
+<div class="success-box">
+  <h4>The Rev 3 Path: Tier 3 Off-Grid + Diesel with Sunwave ESS</h4>
+  <p><strong>Total investment (landed, Sunwave path):</strong> ~$67,400 (no residential ITC — OBBBA repealed Sec. 25D on 12/31/2025)<br>
+  <strong>Backup ESS path (Japower Opt 1 × 2):</strong> ~$76,600 landed if Sunwave fails off-grid verification<br>
+  <strong>Immediate savings:</strong> ~$3,500/year (eliminates RMP bill entirely, full off-grid)<br>
+  <strong>Diesel fuel cost:</strong> ~$200–$400/year (winter-only, infrequent operation)<br>
+  <strong>Simple payback:</strong> ~19 years (~14 years with 4% rate escalation)<br>
+  <strong>Shrink to ~10 years payback if ag/LLC 48E qualifies</strong> (credit ~$20,000 on the gross, construction must start by 7/4/2026)<br>
+  <strong>What you get:</strong> Full off-grid energy independence. No utility relationship. No interconnection paperwork. 160 kWh battery + unlimited diesel backup runtime. Roger's grid becomes optional equipment, not required infrastructure.</p>
+</div>
+
+<div class="info-box">
+  <h4>Phased Alternative: Start Tier 2, Add Later</h4>
+  <p>If cash flow is a concern, start with <strong>Tier 2</strong>: 32 panels, 18 trackers, 1 × Japower 80 kWh unit (~$31,200 residential, no ITC). Build all 30 concrete piers upfront for future expansion. When ready, add 22 more panels on the remaining piers and a second Japower unit — bumps you to full Tier 3 for roughly $26,000 additional. The all-in-one approach makes this upgrade dead simple: just place the second cabinet next to the first and parallel them.</p>
+</div>
+
+<!-- ============ NEXT STEPS ============ -->
+<h2>12. Next Steps</h2>
+
+<div class="timeline-item">
+  <h4>1. Confirm Pump Specs</h4>
+  <p>Get the well pump nameplate data (HP, voltage, amperage, model). This confirms the load profile and ensures the inverter/battery can handle pump startup surge current (typically 3–5× running amps).</p>
+</div>
+
+<div class="timeline-item">
+  <h4>2. Walk the Fenceline</h4>
+  <p>Measure actual available length on south and west fencelines. Note any obstructions, easements, or setback requirements from Mountain Glen Rd. Photograph existing fence posts and terrain.</p>
+</div>
+
+<div class="timeline-item">
+  <h4>3. Get Tariff/Customs Guidance</h4>
+  <p>Contact a customs broker to confirm current duty rates on solar panels, trackers, batteries, and inverters from China or Southeast Asian assembly points. This could swing total cost 10–20%.</p>
+</div>
+
+<div class="timeline-item">
+  <h4>4. Request Supplier Quotes</h4>
+  <p>Send RFQs to LONGi/JA Solar (panels), tracker manufacturers, and <strong>Japower (All-in-One ESS — specify US-spec 120V/240V 60Hz, 80 kWh / 30 kW, quantity 2)</strong>. Their Alibaba listing doesn't show dynamic pricing — send a direct inquiry for real unit cost. Specify delivery terms (FOB or CIF SLC) and required certifications (UL 1741, IEEE 1547).</p>
+</div>
+
+<div class="timeline-item">
+  <h4>5. File Rocky Mountain Power Interconnection Application</h4>
+  <p>Start the interconnection process early — engineering review for systems &gt;25 kW can take 4–8 weeks. Apply under Schedule 137 for the full Tier 3 capacity (30 kW) even if initially populating at Tier 2 levels.</p>
+</div>
+
+<div class="timeline-item">
+  <h4>6. Engage Licensed Electrician</h4>
+  <p>Find a Tooele County electrician experienced with solar PV interconnection. They'll pull the permit, connect the Japower ESS to the main panel, and be present for inspection. The all-in-one design simplifies their scope significantly. Estimated labor: $1,500–$3,000 depending on tier.</p>
+</div>
+
+<!-- ============ APPENDIX ============ -->
+<h2 class="page-break">Appendix A: Single-Line Electrical Diagram</h2>
+
+<div class="layout-diagram">
+<pre>
+╔════════════════════════════════════════════════════════════════════════════╗
+║              SYSTEM SINGLE-LINE DIAGRAM (Tier 3 — Japower ESS)           ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║   SOUTH FENCELINE ARRAY          WEST FENCELINE ARRAY                    ║
+║   ┌──────────────────┐           ┌──────────────────┐                    ║
+║   │ String 1: 8 panels│           │ String 3: 8 panels│                   ║
+║   │ (4 trackers × 2)  │           │ (4 trackers × 2)  │                   ║
+║   │ Voc: ~380V        │           │ Voc: ~380V        │                   ║
+║   │ Isc: ~14A         │           │ Isc: ~14A         │                   ║
+║   └────────┬─────────┘           └────────┬─────────┘                    ║
+║   ┌──────────────────┐           ┌──────────────────┐                    ║
+║   │ String 2: 8 panels│           │ String 4: 8 panels│                   ║
+║   │ (4 trackers × 2)  │           │ (4 trackers × 2)  │                   ║
+║   └────────┬─────────┘           └────────┬─────────┘                    ║
+║            │                              │                              ║
+║   ┌──────────────────┐           ┌──────────────────┐                    ║
+║   │ Remaining panels  │           │  (+ remaining     │                   ║
+║   │ String 5: 6 panels│           │   in strings)     │                   ║
+║   └────────┬─────────┘           └────────┬─────────┘                    ║
+║            │                              │                              ║
+║   ┌────────┴──────────┐         ┌────────┴──────────┐                    ║
+║   │  DC Combiner Box 1 │         │  DC Combiner Box 2 │                   ║
+║   │  (Fused, SPD)      │         │  (Fused, SPD)      │                   ║
+║   └────────┬──────────┘         └────────┬──────────┘                    ║
+║            │  10 AWG PV Wire              │  10 AWG PV Wire              ║
+║            │  (in conduit, underground)   │                              ║
+║            └──────────┬───────────────────┘                              ║
+║                       │                                                  ║
+║          ┌────────────┴────────────┐                                     ║
+║          │    DC DISCONNECT         │                                     ║
+║          │    (Visible, lockable)   │                                     ║
+║          └──────┬─────────┬────────┘                                     ║
+║                 │         │                                              ║
+║   ╔═════════════╧════╗ ╔══╧══════════════╗                               ║
+║   ║  JAPOWER ESS #1  ║ ║  JAPOWER ESS #2 ║                               ║
+║   ║  ALL-IN-ONE      ║ ║  ALL-IN-ONE     ║                               ║
+║   ║                  ║ ║                 ║                               ║
+║   ║  80 kWh LiFePO₄ ║ ║  80 kWh LiFePO₄║                               ║
+║   ║  30 kW Inverter  ║ ║  30 kW Inverter ║                               ║
+║   ║  Built-in BMS    ║ ║  Built-in BMS   ║                               ║
+║   ║  Built-in ATS    ║ ║  Built-in ATS   ║                               ║
+║   ║  Active Cooling  ║ ║  Active Cooling ║                               ║
+║   ║                  ║ ║                 ║                               ║
+║   ║  AC: 120/240V    ║ ║  AC: 120/240V   ║                               ║
+║   ╚════════╤═════════╝ ╚════════╤════════╝                               ║
+║            └────────┬───────────┘                                        ║
+║                     │  (Paralleled AC output)                            ║
+║                     │  60 kW combined / 160 kWh total                    ║
+║                     │                                                    ║
+║          ┌──────────┤                                                    ║
+║          │          │                                                    ║
+║  ┌───────┴────────┐ │                                                    ║
+║  │  MAIN PANEL     │ │                                                    ║
+║  │  (House loads,  │ │                                                    ║
+║  │   well pump,    │ │                                                    ║
+║  │   HVAC, etc.)   │ │                                                    ║
+║  └────────────────┘ │                                                    ║
+║                     │                                                    ║
+║          ┌──────────┴──────────┐                                         ║
+║          │  AC DISCONNECT       │                                         ║
+║          │  (Utility visible    │                                         ║
+║          │   at meter)          │                                         ║
+║          └──────────┬──────────┘                                         ║
+║                     │                                                    ║
+║          ┌──────────┴──────────┐                                         ║
+║          │  UTILITY METER       │                                         ║
+║          │  (Rocky Mountain     │                                         ║
+║          │   Power - bidirec-   │                                         ║
+║          │   tional meter)      │                                         ║
+║          └─────────────────────┘                                         ║
+║                                                                          ║
+║   NO BATTERY SHED REQUIRED — IP65 outdoor cabinets on concrete pad       ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+</pre>
+</div>
+
+<h2>Appendix B: Key Specifications Quick Reference</h2>
+
+<table>
+  <tr><th>Parameter</th><th>Tier 1</th><th>Tier 2</th><th>Tier 3</th></tr>
+  <tr><td>Array size (DC STC)</td><td>9.9 kW</td><td>17.6 kW</td><td>29.7 kW</td></tr>
+  <tr><td>Panel count</td><td>18 × 550W</td><td>32 × 550W</td><td>54 × 550W</td></tr>
+  <tr><td>Tracker posts</td><td>9–10</td><td>16–18</td><td>27–30</td></tr>
+  <tr><td>Fenceline used</td><td>~140 ft (south only)</td><td>~240 ft (south + partial west)</td><td>~420 ft (south + west)</td></tr>
+  <tr><td>Architecture</td><td>Grid-tied</td><td>Grid-tied</td><td><strong>Off-grid + diesel</strong></td></tr>
+  <tr><td>Power center (rev 3)</td><td>1× Japower 30kWh/10kW</td><td>1× Japower 80kWh/18kW or 100kWh/30kW</td><td>2× Sunwave SEI-18K-USP + 10× SW-LCT-16</td></tr>
+  <tr><td>Battery storage</td><td>30 kWh</td><td>80–100 kWh</td><td>160.8 kWh</td></tr>
+  <tr><td>Inverter capacity</td><td>10 kW</td><td>18–30 kW</td><td>36 kW (paralleled)</td></tr>
+  <tr><td>Annual production (est.)</td><td>~16,500 kWh</td><td>~25,000 kWh</td><td>~40,000 kWh</td></tr>
+  <tr><td>Annual offset</td><td>~50%</td><td>~75%</td><td>~120% (exports not sold)</td></tr>
+  <tr><td>Net cost (residential, no ITC)</td><td>~$17,300</td><td>~$31,200</td><td>~$67,400 (Sunwave) / ~$76,600 (Japower backup)</td></tr>
+  <tr><td>Simple payback</td><td>~10 years</td><td>~11 years</td><td>~19 years (~14 w/ rate escalation)</td></tr>
+  <tr><td>Net cost IF 48E ag-qualified (30%)</td><td>~$12,100</td><td>~$21,800</td><td>~$47,200 (Sunwave)</td></tr>
+  <tr><td>Grid connection required</td><td>Yes</td><td>Yes</td><td><strong>No</strong> (optional dormant)</td></tr>
+  <tr><td>UL 1741 SA required</td><td>Yes</td><td>Yes</td><td>No (off-grid)</td></tr>
+  <tr><td>Diesel genny integration</td><td>Standalone</td><td>Standalone</td><td><strong>Yes</strong> (AC input to inverter)</td></tr>
+</table>
+
+<div style="margin-top: 60px; padding: 30px; background: var(--navy); color: white; border-radius: 12px; text-align: center;">
+  <p style="color: var(--gold); font-size: 1.2em; font-weight: 600; margin-bottom: 10px;">Prepared for the Peterson Family — Erda, Utah</p>
+  <p style="color: #94a3b8; font-size: 0.9em;">This design document is a preliminary engineering estimate. Final sizing should be confirmed after pump load verification, fenceline measurement, and customs/tariff confirmation. All costs are estimates based on Q2 2026 market pricing. The residential Federal ITC (Sec. 25D) was repealed by the One Big Beautiful Bill Act effective 12/31/2025 and is $0 for residential owners in 2026. The commercial ITC (Sec. 48E, 30%) may apply if the system is owned by a farm/ranch/LLC business and construction begins by 7/4/2026 — consult a tax professional.</p>
+</div>
+
+</div><!-- /container -->
+</body>
+</html>
